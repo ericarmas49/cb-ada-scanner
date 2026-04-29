@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessibility Demo App</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Standalone Accessibility Demo</p>
+          <h1>Scan one page, auto-remediate the frozen snapshot, and compare the before-and-after evidence.</h1>
+          <p class="lede">
+            This app checks a single URL against automated WCAG 2.2 AA rules and known best practices. It can suggest AI-generated fixes, but every result still requires manual review before any compliance claim.
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="stat">
+            <span>Output</span>
+            <strong>Before report, after report, preview, artifacts</strong>
+          </div>
+          <div class="stat">
+            <span>Scope</span>
+            <strong>One settled page snapshot only</strong>
+          </div>
+          <div class="stat">
+            <span>Claim</span>
+            <strong>Automated checks plus known best practices</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <form id="demo-form" class="form">
+          <label for="url">Page URL</label>
+          <div class="form-row">
+            <input id="url" name="url" type="url" placeholder="https://example.com" required />
+            <button type="submit" id="submit-button">Run Demo</button>
+          </div>
+          <p class="hint">The app renders the page in Playwright, captures a frozen HTML snapshot, applies safe fixes, and reruns the same scan on the remediated snapshot.</p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="status-grid" id="status-grid"></div>
+        <div id="error-box" class="error-box hidden"></div>
+      </section>
+
+      <section id="results" class="results hidden">
+        <div class="links-grid">
+          <a class="link-card" id="preview-link" target="_blank" rel="noreferrer">
+            <span>Preview</span>
+            <strong>Open remediated snapshot</strong>
+          </a>
+          <a class="link-card" id="before-link" target="_blank" rel="noreferrer">
+            <span>Before Report</span>
+            <strong>Open original report</strong>
+          </a>
+          <a class="link-card" id="after-link" target="_blank" rel="noreferrer">
+            <span>After Report</span>
+            <strong>Open remediated report</strong>
+          </a>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-card" id="before-summary"></div>
+          <div class="summary-card" id="after-summary"></div>
+        </div>
+
+        <div class="panel results-panel">
+          <h2>Issues</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Severity</th>
+                  <th>Title</th>
+                  <th>WCAG Ref</th>
+                  <th>Selector</th>
+                  <th>Fixed?</th>
+                  <th>AI?</th>
+                  <th>Confidence</th>
+                  <th>Manual Review</th>
+                </tr>
+              </thead>
+              <tbody id="issues-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="panel">
+            <h2>Remediation Log</h2>
+            <ul id="remediation-log" class="stack-list"></ul>
+          </div>
+          <div class="panel">
+            <h2>Warnings</h2>
+            <ul id="warnings-list" class="stack-list warning-list"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>
