@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accessibility Demo App</title>
+    <title>Accessibility scan report</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -11,15 +11,15 @@
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">Standalone Accessibility Demo</p>
-          <h1>Scan one page, auto-remediate the frozen snapshot, and compare the before-and-after evidence.</h1>
+          <h1>Run a one-page accessibility scan and open the generated report.</h1>
           <p class="lede">
-            This app checks a single URL against automated WCAG 2.2 AA rules and known best practices. It can suggest AI-generated fixes, but every result still requires manual review before any compliance claim.
+            This app checks a single URL with the bundled scanner (automated WCAG-oriented rules and heuristics). Results are indicative only; manual review is required before any compliance claim.
           </p>
         </div>
         <div class="hero-card">
           <div class="stat">
             <span>Output</span>
-            <strong>Before report, after report, preview, artifacts</strong>
+            <strong>HTML report, JSON findings, artifacts</strong>
           </div>
           <div class="stat">
             <span>Scope</span>
@@ -36,10 +36,22 @@
         <form id="demo-form" class="form">
           <label for="url">Page URL</label>
           <div class="form-row">
-            <input id="url" name="url" type="url" placeholder="https://example.com" required />
-            <button type="submit" id="submit-button">Run Demo</button>
+            <input
+              id="url"
+              name="url"
+              type="text"
+              inputmode="url"
+              autocomplete="url"
+              placeholder="dataon.io or https://example.com"
+              required
+            />
+            <button type="submit" id="submit-button">Run scan</button>
+            <button type="button" id="demo-data-button" class="button-secondary">Data demo</button>
           </div>
-          <p class="hint">The app renders the page in Playwright, captures a frozen HTML snapshot, applies safe fixes, and reruns the same scan on the remediated snapshot.</p>
+          <p class="hint">
+            The scanner loads the page in Playwright, runs automated WCAG-oriented checks, and saves a printable HTML report plus JSON under <code>/runs</code>.
+            Use <strong>Data demo</strong> to load sample results without scanning.
+          </p>
         </form>
       </section>
 
@@ -49,28 +61,48 @@
       </section>
 
       <section id="results" class="results hidden">
-        <div class="links-grid">
-          <a class="link-card" id="preview-link" target="_blank" rel="noreferrer">
-            <span>Preview</span>
-            <strong>Open remediated snapshot</strong>
+        <div class="dashboard-grid" id="results-dashboard" aria-label="Scan overview">
+          <article class="dashboard-card" id="dash-status">
+            <span class="dashboard-eyebrow">Status</span>
+            <p class="dashboard-stat" id="dash-violation-count"></p>
+            <p class="dashboard-lede" id="dash-status-copy"></p>
+          </article>
+          <article class="dashboard-card" id="dash-score">
+            <span class="dashboard-eyebrow">Accessibility score</span>
+            <p class="dashboard-stat dashboard-stat-score" id="dash-score-value"></p>
+            <p class="dashboard-lede">
+              Websites with a score of 70% or lower are considered at high risk in this tool.
+            </p>
+          </article>
+          <article class="dashboard-card" id="dash-risk">
+            <span class="dashboard-eyebrow">Compliance risk</span>
+            <p class="dashboard-risk-label" id="dash-risk-value"></p>
+            <p class="dashboard-lede" id="dash-risk-copy"></p>
+          </article>
+        </div>
+        <p class="dashboard-footnote" id="dashboard-footnote">
+          <sup aria-hidden="true">*</sup> Automated scan of a single page snapshot only. Not a complete WCAG audit and not a legal determination of conformance. Manual testing is required for any formal compliance claim.
+        </p>
+
+        <div class="links-grid report-links">
+          <a class="link-card" id="report-link" target="_blank" rel="noreferrer">
+            <span>Report</span>
+            <strong>Open HTML report</strong>
           </a>
-          <a class="link-card" id="before-link" target="_blank" rel="noreferrer">
-            <span>Before Report</span>
-            <strong>Open original report</strong>
-          </a>
-          <a class="link-card" id="after-link" target="_blank" rel="noreferrer">
-            <span>After Report</span>
-            <strong>Open remediated report</strong>
+          <a class="link-card" id="report-json-link" target="_blank" rel="noreferrer">
+            <span>Data</span>
+            <strong>Open JSON findings</strong>
           </a>
         </div>
 
-        <div class="summary-grid">
-          <div class="summary-card" id="before-summary"></div>
-          <div class="summary-card" id="after-summary"></div>
+        <div class="summary-grid summary-grid-single">
+          <div class="summary-card" id="scan-summary"></div>
         </div>
+
+        <p id="demo-strip" class="demo-strip hidden" role="status" aria-live="polite"></p>
 
         <div class="panel results-panel">
-          <h2>Issues</h2>
+          <h2>Violations</h2>
           <div class="table-wrap">
             <table>
               <thead>
@@ -78,15 +110,10 @@
                   <th>ID</th>
                   <th>Criterion</th>
                   <th>Level</th>
-                  <th>Principle</th>
                   <th>Severity</th>
                   <th>Title</th>
                   <th>WCAG Ref</th>
                   <th>Selector</th>
-                  <th>Fixed?</th>
-                  <th>AI?</th>
-                  <th>Confidence</th>
-                  <th>Automation</th>
                   <th>Manual Review</th>
                 </tr>
               </thead>
@@ -95,15 +122,13 @@
           </div>
         </div>
 
-        <div class="detail-grid">
-          <div class="panel">
-            <h2>Remediation Log</h2>
-            <ul id="remediation-log" class="stack-list"></ul>
-          </div>
-          <div class="panel">
-            <h2>Warnings</h2>
-            <ul id="warnings-list" class="stack-list warning-list"></ul>
-          </div>
+        <div class="panel">
+          <h2>Disclaimer</h2>
+          <p class="hint disclaimer-hint">
+            The violations table is the full list of what this snapshot detected (rule id, WCAG mapping where available, selector, etc.).
+            The scanner records issues only; it does not edit your site or apply repairs. Automated coverage is incomplete, so a human review
+            is still required before any compliance claim.
+          </p>
         </div>
       </section>
     </main>

@@ -1,0 +1,153 @@
+{
+  "isDemo": true,
+  "runId": "00000000-0000-4000-8000-00000000demo",
+  "status": "done",
+  "reportUrl": "#demo-report",
+  "reportJsonUrl": "#demo-json",
+  "summary": {
+    "critical": 3,
+    "high": 4,
+    "moderate": 3,
+    "low": 2
+  },
+  "dashboard": {
+    "violationCount": 12,
+    "criticalCount": 3,
+    "accessibilityScore": 55,
+    "complianceRisk": "high"
+  },
+  "issues": [
+    {
+      "id": "image-alt",
+      "criterionId": "1.1.1",
+      "criterionTitle": "Non-text Content",
+      "complianceLevel": "A",
+      "severity": "critical",
+      "title": "Images must have alternate text",
+      "wcagReference": "",
+      "selector": "img.hero-banner",
+      "manual_review_required": false
+    },
+    {
+      "id": "button-name",
+      "criterionId": "4.1.2",
+      "criterionTitle": "Name, Role, Value",
+      "complianceLevel": "A",
+      "severity": "critical",
+      "title": "Buttons must have discernible text",
+      "wcagReference": "",
+      "selector": "button.icon-close",
+      "manual_review_required": false
+    },
+    {
+      "id": "link-name",
+      "criterionId": "2.4.4",
+      "criterionTitle": "Link Purpose (In Context)",
+      "complianceLevel": "A",
+      "severity": "high",
+      "title": "Links must have discernible text",
+      "wcagReference": "",
+      "selector": "a.read-more",
+      "manual_review_required": false
+    },
+    {
+      "id": "color-contrast",
+      "criterionId": "1.4.3",
+      "criterionTitle": "Contrast (Minimum)",
+      "complianceLevel": "AA",
+      "severity": "high",
+      "title": "Elements must have sufficient color contrast",
+      "wcagReference": "",
+      "selector": ".footer-muted",
+      "manual_review_required": true
+    },
+    {
+      "id": "label",
+      "criterionId": "3.3.2",
+      "criterionTitle": "Labels or Instructions",
+      "complianceLevel": "A",
+      "severity": "high",
+      "title": "Form elements must have labels",
+      "wcagReference": "",
+      "selector": "#search-field",
+      "manual_review_required": false
+    },
+    {
+      "id": "heading-order",
+      "criterionId": "1.3.1",
+      "criterionTitle": "Info and Relationships",
+      "complianceLevel": "A",
+      "severity": "moderate",
+      "title": "Heading levels should increase by one",
+      "wcagReference": "",
+      "selector": "h4.sidebar-title",
+      "manual_review_required": true
+    },
+    {
+      "id": "landmark-one-main",
+      "criterionId": "1.3.1",
+      "criterionTitle": "Info and Relationships",
+      "complianceLevel": "A",
+      "severity": "moderate",
+      "title": "Document must have one main landmark",
+      "wcagReference": "",
+      "selector": "body",
+      "manual_review_required": true
+    },
+    {
+      "id": "duplicate-id",
+      "criterionId": "4.1.1",
+      "criterionTitle": "Parsing",
+      "complianceLevel": "A",
+      "severity": "critical",
+      "title": "ID attribute value must be unique",
+      "wcagReference": "",
+      "selector": "#email",
+      "manual_review_required": false
+    },
+    {
+      "id": "html-has-lang",
+      "criterionId": "3.1.1",
+      "criterionTitle": "Language of Page",
+      "complianceLevel": "A",
+      "severity": "high",
+      "title": "HTML element must have a lang attribute",
+      "wcagReference": "",
+      "selector": "html",
+      "manual_review_required": false
+    },
+    {
+      "id": "focus-order-semantics",
+      "criterionId": "2.4.3",
+      "criterionTitle": "Focus Order",
+      "complianceLevel": "A",
+      "severity": "moderate",
+      "title": "Focus order may not follow meaningful sequence",
+      "wcagReference": "",
+      "selector": ".modal[role=\"dialog\"]",
+      "manual_review_required": true
+    },
+    {
+      "id": "region",
+      "criterionId": "1.3.1",
+      "criterionTitle": "Info and Relationships",
+      "complianceLevel": "A",
+      "severity": "low",
+      "title": "Content outside landmarks",
+      "wcagReference": "",
+      "selector": "div.promo-rail",
+      "manual_review_required": true
+    },
+    {
+      "id": "aria-valid-attr-value",
+      "criterionId": "4.1.2",
+      "criterionTitle": "Name, Role, Value",
+      "complianceLevel": "A",
+      "severity": "low",
+      "title": "ARIA attribute value is invalid",
+      "wcagReference": "",
+      "selector": "[aria-expanded=\"maybe\"]",
+      "manual_review_required": false
+    }
+  ]
+}

@@ -5,6 +5,7 @@ const path = require('path');
 const { AxeBuilder } = require('@axe-core/playwright');
 const { normalizeAxeFindings } = require('../report/normalize_findings');
 
+/** Report-only: records axe violations per DOM node; does not repair or mutate the page. */
 async function runAxe(page, artifactsDir, outputDir) {
   const results = await new AxeBuilder({ page }).analyze();
   const rawPath = path.join(artifactsDir, 'axe-raw.json');

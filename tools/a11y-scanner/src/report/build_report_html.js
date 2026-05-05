@@ -61,7 +61,7 @@ function renderFindingGroup(ruleId, items) {
       <p class="meta">Rule ID: ${escapeHtml(ruleId)} | Occurrences: ${occurrenceCount}</p>
       ${first.criterionId ? `<p class="meta">Criterion: WCAG ${escapeHtml(first.criterionId)} | ${escapeHtml(first.criterionTitle || '')} | Level ${escapeHtml(first.complianceLevel || '')} | ${escapeHtml(first.principle || '')}</p>` : ''}
       <p>${escapeHtml(first.why || '')}</p>
-      <p><strong>Next step:</strong> ${escapeHtml(first.remediation || first.fix || '')}</p>
+      ${first.remediation || first.fix ? `<p><strong>Reference (informational):</strong> ${escapeHtml(first.remediation || first.fix)}</p>` : ''}
       ${items.map(renderFindingItem).join('')}
     </div>
   `;

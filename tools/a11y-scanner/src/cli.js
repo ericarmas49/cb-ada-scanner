@@ -86,13 +86,18 @@ async function upgradeToHttpsIfReachable(inputUrl) {
 }
 
 function normalizeUrl(input) {
-  let url = input;
+  let url = String(input || '').trim();
+  if (!url) return null;
   if (!/^https?:\/\//i.test(url)) {
     url = `https://${url}`;
   }
-  const urlObj = new URL(url);
-  urlObj.hash = '';
-  return urlObj.toString();
+  try {
+    const urlObj = new URL(url);
+    urlObj.hash = '';
+    return urlObj.toString();
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
@@ -106,6 +111,11 @@ async function main() {
   }
 
   let normalizedUrl = urlArg ? normalizeUrl(urlArg) : null;
+  if (urlArg && !normalizedUrl) {
+    error('Invalid or empty URL');
+    process.exitCode = 1;
+    return;
+  }
   if (normalizedUrl) {
     normalizedUrl = await upgradeToHttpsIfReachable(normalizedUrl);
   }
@@ -118,7 +128,7 @@ async function main() {
     outputDir: args.output || path.join('output', timestampFolder()),
     formTest: args.formTest !== undefined ? String(args.formTest).toLowerCase() !== 'false' : true,
     keyboardTabSteps: Number(args.keyboardTabSteps || 25),
-    settleMs: Number(args.settleMs || 1500),
+    settleMs: Number(args.settleMs || 2500),
     viewport: parseViewport(args.viewport || '1280x720'),
     userAgent: args.userAgent || null
   };

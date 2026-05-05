@@ -24,7 +24,7 @@ app.post('/api/demo', async (req, res) => {
     }
 
     const origin = `${req.protocol}://${req.get('host')}`;
-    const result = await runAccessibilityDemo({
+    const result = runAccessibilityDemo({
       appRoot: __dirname,
       url,
       origin
@@ -33,9 +33,11 @@ app.post('/api/demo', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Accessibility demo failed:', error);
-    res.status(500).json({
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    const status = message === 'Invalid or empty url' ? 400 : 500;
+    res.status(status).json({
       status: 'error',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: message
     });
   }
 });

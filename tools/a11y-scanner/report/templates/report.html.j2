@@ -64,7 +64,9 @@
           <h3>{{ items[0].title }}</h3>
           <p class="meta">Rule ID: {{ rule_id }} | Occurrences: {{ items | sum(attribute='occurrences') }}</p>
           <p>{{ items[0].why }}</p>
-          <p><strong>Next step:</strong> {{ items[0].fix }}</p>
+          {% if items[0].remediation or items[0].fix %}
+          <p><strong>Reference (informational):</strong> {{ items[0].remediation or items[0].fix }}</p>
+          {% endif %}
 
           {% for item in items %}
             <div class="finding-item">

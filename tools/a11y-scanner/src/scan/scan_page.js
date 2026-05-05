@@ -9,6 +9,31 @@ const { runTargetSizeCheck } = require('./wcag22_target_size');
 const { runDraggingCheck } = require('./wcag22_dragging');
 const { runFormTest } = require('./form_test');
 
+async function settlePageForScan(page) {
+  try {
+    await page.waitForLoadState('networkidle', { timeout: 8000 });
+  } catch (_) {
+    // ignore — many SPAs never go fully idle
+  }
+  try {
+    await page.evaluate(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const maxPasses = 24;
+      for (let pass = 0; pass < maxPasses; pass += 1) {
+        const { scrollHeight, clientHeight } = document.documentElement;
+        const y = window.scrollY + clientHeight * 0.92;
+        if (y >= scrollHeight - 4) break;
+        window.scrollTo(0, y);
+        await sleep(100);
+      }
+      window.scrollTo(0, 0);
+      await sleep(200);
+    });
+  } catch (_) {
+    // ignore — e.g. cross-origin frames
+  }
+}
+
 function injectBaseHref(html, baseHref) {
   if (!html || html.includes('<base')) return html;
   const baseTag = `<base href="${baseHref}">`;
@@ -45,7 +70,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
       const htmlWithBase = injectBaseHref(html, baseHref);
       await page.setContent(htmlWithBase, { waitUntil: 'domcontentloaded' });
     } else {
-      response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: options.timeoutMs });
+      response = await page.goto(url, { waitUntil: 'load', timeout: options.timeoutMs });
     }
   } catch (err) {
     await browser.close();
@@ -53,11 +78,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
   }
 
   await page.waitForTimeout(options.settleMs);
-  try {
-    await page.waitForLoadState('networkidle', { timeout: 2000 });
-  } catch (_) {
-    // ignore
-  }
+  await settlePageForScan(page);
 
   const finalUrl = htmlFile ? `file://${htmlFile}` : page.url();
   const title = await page.title();

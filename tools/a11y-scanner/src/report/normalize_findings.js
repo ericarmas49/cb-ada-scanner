@@ -37,7 +37,7 @@ function normalizeAxeFindings(results) {
           boundingBox: { x: 0, y: 0, w: 0, h: 0 }
         },
         why: violation.description || 'Automated accessibility violation detected by axe-core.',
-        fix: violation.help || 'Review the element and apply the recommended fix.',
+        fix: violation.help || violation.description || '',
         evidence: {
           screenshot: null,
           extra: {
