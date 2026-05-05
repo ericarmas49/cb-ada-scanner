@@ -74,6 +74,9 @@ function renderResults(data) {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${issue.id}</td>
+      <td>${issue.criterionId || '-'}</td>
+      <td>${issue.complianceLevel || '-'}</td>
+      <td>${issue.principle || '-'}</td>
       <td>${issue.severity}</td>
       <td>${issue.title}</td>
       <td>${linkify(issue.wcagReference)}</td>
@@ -81,6 +84,7 @@ function renderResults(data) {
       <td>${boolText(issue.fixed)}</td>
       <td>${boolText(issue.aiGenerated)}</td>
       <td>${issue.confidence}</td>
+      <td>${issue.automation || '-'}</td>
       <td>${boolText(issue.manual_review_required)}</td>
     `;
     issuesBody.appendChild(row);

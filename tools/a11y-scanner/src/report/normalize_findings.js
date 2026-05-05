@@ -42,7 +42,8 @@ function normalizeAxeFindings(results) {
           screenshot: null,
           extra: {
             helpUrl: violation.helpUrl || null,
-            impact: violation.impact
+            impact: violation.impact,
+            tags: violation.tags || []
           }
         },
         occurrences: 1

@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { scanPage } = require('./scan/scan_page');
 const { dedupeFindings } = require('./report/dedupe');
+const { enrichFindings } = require('./report/enrich_findings');
 const { scoreReport } = require('./report/scoring');
 const { writeReportFiles } = require('./report/write_files');
 const { info, warn, error } = require('./utils/logger');
@@ -145,7 +146,10 @@ async function main() {
   }
 
   const deduped = dedupeFindings(scanResult.findings);
-  const summary = scoreReport(deduped);
+  const enrichedFindings = enrichFindings(deduped, {
+    pageUrl: scanResult.page.finalUrl
+  });
+  const summary = scoreReport(enrichedFindings);
 
   const report = {
     scan: {
@@ -165,7 +169,7 @@ async function main() {
       }
     },
     page: scanResult.page,
-    findings: deduped,
+    findings: enrichedFindings,
     summary
   };
 
