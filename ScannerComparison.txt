@@ -1,0 +1,277 @@
+THIS DOCUMENT HAS 3 DIFFERENT SCANNER RESULTS FOR THE SAME WEBSITE. 
+
+1. https://www.accessibilitychecker.org/
+2. https://accessibe.com/
+3. https://userway.org/
+
+THESE SCANNERS HAVE DIFFERENT RESULTS. 
+
+Site Scan: www.brooklinen.com
+
+
+
+1. Ensure ARIA Roles Are Correctly Applied
+
+FAILING ELEMENTS ON YOUR WEBSITE (15):
+
+#splide02-slide01
+<li class="splide__slide offer is-active is-visible" id="splide02-slide01" role="group" aria-roledescription="slide" aria-label="1 of 3" style="width: calc(100%);">
+
+#slider-template--20616429371482__visual_category_NabbPT-slide01
+<li class="splide__slide visual-category-card is-active is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide01" role="tabpanel" aria-roledescription="slide" aria-label="1 of 6" style="margin-right: 24px; width: 244px; height: calc(271.111px);">
+
+#slider-template--20616429371482__visual_category_NabbPT-slide02
+<li class="splide__slide visual-category-card is-visible is-next" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide02" role="tabpanel" aria-roledescription="slide" aria-label="2 of 6" style="margin-right: 24px; width: 244px; height: calc(271.111px);">
+
+#slider-template--20616429371482__visual_category_NabbPT-slide03
+<li class="splide__slide visual-category-card is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide03" role="tabpanel" aria-roledescription="slide" aria-label="3 of 6" style="margin-right: 24px; width: 244px; height: calc(271.111px);">
+
+#slider-template--20616429371482__visual_category_NabbPT-slide04
+<li class="splide__slide visual-category-card is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide04" role="tabpanel" aria-roledescription="slide" aria-label="4 of 6" style="margin-right: 24px; width: 244px; height: calc(271.111px);">
+
+#slider-template--20616429371482__review-cards-slide01
+<li class="splide__slide review-card is-active is-visible" id="slider-template--20616429371482__review-cards-slide01" role="group" aria-roledescription="slide" aria-label="1 of 3" style="width: calc(100%);">
+li[aria-label="1 of 7"]
+
+<li class="splide__slide is-active is-visible" id="splide01-slide01" role="group" aria-roledescription="slide" aria-label="1 of 7" style="margin-right: 2.5rem; width: 411px;">
+li[aria-label="2 of 7"]
+
+<li class="splide__slide is-visible is-next" id="splide01-slide02" role="group" aria-roledescription="slide" aria-label="2 of 7" style="margin-right: 2.5rem; width: 411px;">
+#slider-template--20616429371482__visual_category_NabbPT-slide01
+
+<li class="splide__slide visual-category-card is-active is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide01" role="tabpanel" aria-roledescription="slide" aria-label="1 of 6" style="margin-right: 6px; width: 108px; height: calc(120px);">
+#slider-template--20616429371482__visual_category_NabbPT-slide02
+
+<li class="splide__slide visual-category-card is-visible is-next" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide02" role="tabpanel" aria-roledescription="slide" aria-label="2 of 6" style="margin-right: 6px; width: 108px; height: calc(120px);">
+#slider-template--20616429371482__visual_category_NabbPT-slide03
+
+<li class="splide__slide visual-category-card is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide03" role="tabpanel" aria-roledescription="slide" aria-label="3 of 6" style="margin-right: 6px; width: 108px; height: calc(120px);">
+#slider-template--20616429371482__review-cards-slide01
+
+<li class="splide__slide review-card is-active is-visible" id="slider-template--20616429371482__review-cards-slide01" role="tabpanel" aria-roledescription="slide" aria-label="1 of 3" style="width: calc(100%);">
+.splide__list[role="presentation"] > .is-visible.is-active[aria-label="1 of 6"]
+
+<li class="splide__slide is-active is-visible" id="splide01-slide01" role="tabpanel" aria-roledescription="slide" aria-label="1 of 6" style="margin-right: 1rem; width: 38%;">
+.splide__list[role="presentation"] > .is-next.is-visible[aria-label="2 of 6"]
+
+<li class="splide__slide is-visible is-next" id="splide01-slide02" role="tabpanel" aria-roledescription="slide" aria-label="2 of 6" style="margin-right: 1rem; width: 38%;">
+li[aria-label="1 of 7"]
+
+<li class="splide__slide is-active is-visible" id="splide01-slide01" role="group" aria-roledescription="slide" aria-label="1 of 7" style="margin-right: 1rem; width: 241px;">
+
+
+2.  Ensures the order of headings is semantically correct 
+
+.module--static-promo-banner > .BannerContainer.BannerContainer--Full.page-width > .BannerContainer__Copy.BannerContainer--Full__Copy > .BannerContainer__Headline
+<h3 class="BannerContainer__Headline h3"> <span class="BannerContainer__Desktop">Up to 50% Off Bundles.</span> <span class="BannerContainer__Mobile">Up to 50% Off Bundles.</span> </h3>
+
+
+3. Ensures <img> elements have alternate text or a role of none or presentation 
+
+.media--desktop > video > img
+<img src="//www.brooklinen.com/cdn/shop/files/preview_images/71d7e914bbef4096bab9d03fc956dc8a.thumbnail.0000000000_small.jpg?v=1778075806">
+.media--mobile > video > img
+<img src="//www.brooklinen.com/cdn/shop/files/preview_images/a2ec732ee69642baa63508af6f1f0f95.thumbnail.0000000000_small.jpg?v=1778075800">
+
+
+4. Ensures every form element has a label
+
+#luxury-bedding-sheets-amp-comforters-online-brooklinen > input
+<input style="width: 0px; height: 0px; opacity: 0; position: absolute; bottom: 0px; right: 0px; z-index: -1;">
+
+
+5. Landmarks should have a unique role or role/label/title (i.e. accessible name) combination
+
+#splide02
+<div class="nano--slide-container splide splide--loop splide--ltr splide--draggable is-active is-overflow is-initialized" id="splide02" role="region" aria-roledescription="carousel">
+
+
+6. Ensures all page content is contained by landmarks
+
+.headline.h4 > .desktop
+<span class="desktop">Hold Up!<br> Stop Right There.</span>
+.modal > .cta.close.button--primary > a[href="#"] > .desktop
+<span class="desktop">Start Saving Now</span>
+.Cart__AlertTitle
+<h3 class="h3 Cart__AlertTitle">Get it before it's gone!</h3>
+
+
+
+========================
+
+
+SCANNER https://accessibe.com/
+
+1. Focused elements should not be obscured by a sticky header
+
+<header id="bkl-5-v1" class="header page-width" data-scroll-threshold="150"> <header-drawer class="header__drawer"> </header-drawer><div class="header__heading"> <a href="/" class="header__heading-link link link--icon focus-inset"><img src="//www.bro...
+
+
+2. Aria labels should not override or replace visible text
+
+Failed Elements: 
+<button class="header__search header__search--ab js-nudge-ab active" aria-label="search button"><svg class="icon icon-search " role="img" aria-label="search" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> <...
+<button class="header__icon header__icon--account link link--icon focus-inset" aria-label="account"> <span class="hidden">Sign In</span> <span class="nav-hover"></span> <svg class="icon icon-account " role="img" aria-label="account" width="16" height...
+<a class="ot-cookie-policy-link" href="https://www.brooklinen.com/pages/privacy" aria-label="More information about your privacy, opens in a new tab" rel="noopener" target="_blank">Cookie Policy</a>
+
+
+1 Code snapshots of successful elements: 
+<button id="onetrust-pc-btn-handler" aria-label="Manage Preferences, Opens the preference center dialog">Manage Preferences</button>
+
+
+3. Link context should be exposed to assistive technology
+
+10 Code snapshots of failed elements
+<a href="https://www.brooklinen.com/pages/all-bundles" target="_blank" tabindex="-1">Shop now</a>
+
+<a href="https://www.brooklinen.com/pages/all-bundles" target="_blank" tabindex="-1">Shop now</a>
+
+<a href="https://www.brooklinen.com/pages/all-bundles" target="_blank" tabindex="-1">Shop now</a>
+
+<a href="https://www.brooklinen.com/pages/all-bundles">Shop Now</a>
+
+<a data-ht-element="cta" href="/pages/reviews"> Read Our Reviews </a>
+
+<a class="duo-shop-content-card__cta t5" href="https://www.brooklinen.com/products/dreamweave-waffle-bed-blanket?variant=43297813102682" data-ht-element="content-card-cta" data-color="night-sky-dark" data-ht-id="Shop Now">Shop Now</a>
+
+<a class="duo-shop-content-card__cta t5" href="https://www.brooklinen.com/products/waffle-robe?variant=43297813626970" data-ht-element="content-card-cta" data-color="night-sky-dark" data-ht-id="Shop Now" tabindex="-1">Shop Now</a>
+
+<a class="duo-shop-content-card__cta t5" href="https://www.brooklinen.com/products/waffle-bath-towel-bundle?variant=43297826406490" data-ht-element="content-card-cta" data-color="night-sky-dark" data-ht-id="Shop Now" tabindex="-1">Shop Now</a>
+
+<a class="duo-shop-content-card__cta t5" href="https://www.brooklinen.com/products/dreamweave-waffle-throw-blanket?variant=43297812545626" data-ht-element="content-card-cta" data-color="night-sky-dark" data-ht-id="Shop Now" tabindex="-1">Shop Now</a>
+
+<a class="duo-shop-content-card__cta t5" href="https://www.brooklinen.com/products/dreamweave-waffle-lumbar-pillow-cover?variant=43297812938842" data-ht-element="content-card-cta" data-color="night-sky-dark" data-ht-id="Shop Now" tabindex="-1">Shop N...
+
+4 Code snapshots of successful elements
+
+<a href="https://www.brooklinen.com/pages/memorial-day-sale" title="https://www.brooklinen.com/pages/memorial-day-sale">Memorial Day: 25% off sitewide!</a>
+
+<a href="https://www.brooklinen.com/pages/memorial-day-sale" title="https://www.brooklinen.com/pages/memorial-day-sale" tabindex="-1">Memorial Day: 25% off sitewide!</a>
+
+<a href="/" class="header__heading-link link link--icon focus-inset"><img src="//www.brooklinen.com/cdn/shop/files/Best-In-Bed_Lockup_web-only_Blue.svg?v=1770997710&amp;width=100" alt="Brooklinen" srcset="//www.brooklinen.com/cdn/shop/files/Best-In-B...
+
+<a href="/pages/all-bed" data-ht-element="nav-l1-link" class="header__menu-item list-menu__item link" data-drawer="Bed"> <span class="header__active-menu-item" "="">Bed</span> </a>
+
+
+4. Only elements that function as articles should be tagged as article regions
+
+
+<article class="footer-block__legal p6"><p>Please keep me up to date with Brooklinen news and offers by email. I can unsubscribe at any time. I have read the Brooklinen <a href="/pages/privacy" title="Privacy">Privacy Policy</a>.</p></article>
+
+
+5. Only elements that function as images should be tagged as image
+
+10 Code snapshots of failed elements
+
+<svg class="icon icon-search " role="img" aria-label="search" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M9.32373 9.5459L14.1829 14.405" stroke="#283455" stroke-width="1.5" stroke-linecap="squa...
+<svg class="icon icon-account " role="img" aria-label="account" width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="7.99998" cy="5.5" r="4.75" stroke="#283455" stroke-width="1.5" stroke-linecap="squa...
+<svg class="icon icon-bag " role="img" aria-label="bag" width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M1.69452 17.25L0.809908 5.75H13.1901L12.3055 17.25H1.69452Z" stroke="#283455" stroke-width="1....
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" focusable="false" role="img" aria-label="arrow icon"><path d="M17.3142 30.8529C16.6948 31.4822 15.679 31.4787 15.064 30.8452C14.4713 30.2347 14.4713 29.2637 15.064 28....
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" focusable="false" role="img" aria-label="arrow icon"><path d="M17.3142 30.8529C16.6948 31.4822 15.679 31.4787 15.064 30.8452C14.4713 30.2347 14.4713 29.2637 15.064 28....
+<svg role="img" aria-label="sparkle" xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none"><g opacity="0.8"><path d="M14 6C14 5.89282 13.9252 5.79676 13.8122 5.7592C11.0095 4.82318 10.4825 4.09803 9.78576 0.216752C...
+<svg role="img" aria-label="heart-lg" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none"><path d="M14.8418 5.03125C16.8224 2.98944 20.0282 2.98944 22.0088 5.03125C23.9975 7.0816 23.9976 10.4126 22.0088 12.4629L1...
+<svg role="img" aria-label="bookend-arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="39" viewBox="0 0 24 39" fill="none"><rect width="24" height="39" transform="translate(24 39)" fill="#FDFAF8"></rect><path d="M16.8761 26.7353C16.4632 27....
+<svg role="img" aria-label="bookend-arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="39" viewBox="0 0 24 39" fill="none"><rect width="24" height="39" transform="translate(24 39)" fill="#FDFAF8"></rect><path d="M16.8761 26.7353C16.4632 27....
+<svg role="img" aria-label="qv-plus" width="12" height="12" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.635254 3.77237C0.635254 3.49758 0.858018 3.27481 1.13281 3.27481H6.77179C7.04658 3.27481 7.26935 3.49758 7.26935 ...
+
+
+
+2 Code snapshots of successful elements
+<img src="//www.brooklinen.com/cdn/shop/files/Best-In-Bed_Lockup_web-only_Blue.svg?v=1770997710&amp;width=100" alt="Brooklinen" srcset="//www.brooklinen.com/cdn/shop/files/Best-In-Bed_Lockup_web-only_Blue.svg?v=1770997710&amp;width=50 50w, //www.broo...
+<img src="//www.brooklinen.com/cdn/shop/files/BKL_26-04_WaffleWorld_Look1_3800x_17x8_WO_dda59085-24f3-4612-88aa-030317e00d80.jpg?v=1779388238&amp;width=2000" alt="Primary Hero Image" width="2880" height="1356" loading="eager">
+
+
+6. Original and discounted prices should be indicated to assistive technology
+
+8 Code snapshots of failed elements
+<span class="Price__Default t4 --slashout">$387</span>
+<span class="Price__Default t4 --slashout">$169</span>
+<span class="Price__Default t4 --slashout">$407</span>
+<span class="Price__Default t4 --slashout">$538</span>
+<span class="Price__Default t4 --slashout">$169</span>
+<span class="Price__Default t4 --slashout">$428</span>
+<span class="Price__Default t4 --slashout">$129</span>
+<span class="Price__Default t4 --slashout">$199</span>
+
+
+7. Only elements that function as tab panels should receive role="tabpanel"
+
+10 Code snapshots of failed elements
+<li class="splide__slide visual-category-card splide__slide--clone" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-clone01" role="tabpanel" aria-roledescription="slide" aria-label="2 of 6" style="...
+<li class="splide__slide visual-category-card splide__slide--clone" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-clone02" role="tabpanel" aria-roledescription="slide" aria-label="3 of 6" style="...
+<li class="splide__slide visual-category-card splide__slide--clone" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-clone03" role="tabpanel" aria-roledescription="slide" aria-label="4 of 6" style="...
+<li class="splide__slide visual-category-card splide__slide--clone" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-clone04" role="tabpanel" aria-roledescription="slide" aria-label="5 of 6" style="...
+<li class="splide__slide visual-category-card splide__slide--clone is-prev" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-clone05" role="tabpanel" aria-roledescription="slide" aria-label="6 of 6"...
+<li class="splide__slide visual-category-card is-active is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide01" role="tabpanel" aria-roledescription="slide" aria-label="1 of 6" style="...
+<li class="splide__slide visual-category-card is-visible is-next" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide02" role="tabpanel" aria-roledescription="slide" aria-label="2 of 6" style="ma...
+<li class="splide__slide visual-category-card is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide03" role="tabpanel" aria-roledescription="slide" aria-label="3 of 6" style="margin-rig...
+<li class="splide__slide visual-category-card is-visible" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide04" role="tabpanel" aria-roledescription="slide" aria-label="4 of 6" style="margin-rig...
+<li class="splide__slide visual-category-card" data-ht-component="visual-category-card" id="slider-template--20616429371482__visual_category_NabbPT-slide05" role="tabpanel" aria-roledescription="slide" aria-label="5 of 6" style="margin-right: 24px; w...
+
+========================
+
+
+SCANNER https://userway.org/
+for this scanner I only have the issues (and then number of times it happened), level, but not examples. 
+
+1. Image lacks a required 'alt' attribute (2) A
+1.1.1 Non-text Content
+
+2. Identical img 'alt' values for different images (33) A
+1.1.1 Non-text Content
+
+3. The 'alt' attribute contains extraneous text (32) A
+1.1.1 Non-text Content
+
+4. Focusable element detected within element with aria-hidden='true' attribute (6) A
+1.0 Perceivable
+
+5. List group lacks any list items (2) A
+1.3.1 Info and Relationships
+
+6. Missing 'tabindex='0'' attribute (2) A
+2.1.1 Keyboard
+
+7. Video begins playing automatically after page load (2) A
+2.2.2 Pause, Stop, Hide
+
+8. Frame lacks a populated 'title' attribute (23) A
+2.4.1 Bypass Blocks
+
+9. Identical 'title' attributes for different frames (2) A
+2.4.1 Bypass Blocks
+
+10. Links with identical targets have different descriptive text (84) AA
+3.2.4 Consistent Identification, 3.2.4, 2.4.9
+
+11. Page should have a single <h1> element (2) AA
+2.4.6 Headings and Labels
+
+12. Heading level skipped (3) AA
+2.4.6 Headings and Labels
+
+13. Form field lacks a <label> element (1) AA
+2.4.6 Headings and Labels, 4.1.2
+
+14. New tab or window opens without warning user (4) AAA
+3.2.5 Change on Request
+
+15. Duplicate 'id' values (5) A
+4.1.1 Parsing
+
+16. Empty 'id' attribute (1) A
+4.1.1 Parsing
+
+17. Element lacks semantic markup. (1) A
+1.3.1 Info and Relationships
+
+18. A <button> element or element with a 'button' role has a descendant with a 'tabindex' attribute (1) A
+2.1.1 Keyboard
+
+19. A <button> element has been detected within another <button> element. (1) A
+2.1.1 Keyboard
+
+20. An <a> (link) element has been detected within a <button> element or a <button> element has been detected within an <a> (link) element (6) A
+2.1.1 Keyboard
+
+

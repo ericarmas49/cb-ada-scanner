@@ -185,12 +185,16 @@ async function main() {
 
   const reportPaths = {
     jsonPath: path.join(options.outputDir, 'report.json'),
-    htmlPath: path.join(options.outputDir, 'report.html')
+    htmlPath: path.join(options.outputDir, 'report.html'),
+    pdfPath: path.join(options.outputDir, 'report.pdf')
   };
 
   const writeResult = await writeReportFiles(report, reportPaths, options.outputDir);
   if (!writeResult.htmlSuccess) {
     warn('Report HTML generation failed. JSON report created.');
+    process.exitCode = 2;
+  } else if (!writeResult.pdfSuccess) {
+    warn('Report PDF generation failed. HTML and JSON reports created.');
     process.exitCode = 2;
   } else if (scanResult.partialFailures.length > 0) {
     warn('Partial success: some steps failed');

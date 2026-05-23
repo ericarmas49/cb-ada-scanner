@@ -8,6 +8,7 @@ const { runKeyboardFocusPass } = require('./keyboard_focus_pass');
 const { runTargetSizeCheck } = require('./wcag22_target_size');
 const { runDraggingCheck } = require('./wcag22_dragging');
 const { runFormTest } = require('./form_test');
+const { runSupplementalRuntimeChecks } = require('./supplemental_runtime_checks');
 
 async function settlePageForScan(page) {
   try {
@@ -85,10 +86,18 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
   const status = response ? response.status() : null;
 
   const screenshotPath = path.join(artifactsDir, 'screenshot-full.png');
+  const viewportScreenshotPath = path.join(artifactsDir, 'screenshot-viewport.jpg');
   const htmlPath = path.join(artifactsDir, 'html-snapshot.html');
   const consolePath = path.join(artifactsDir, 'console.log');
   const toRel = (p) => path.relative(outputDir, p);
+  let viewportScreenshot = null;
 
+  try {
+    await page.screenshot({ path: viewportScreenshotPath, fullPage: false, type: 'jpeg', quality: 55 });
+    viewportScreenshot = toRel(viewportScreenshotPath);
+  } catch (err) {
+    partialFailures.push('viewport-screenshot');
+  }
   await page.screenshot({ path: screenshotPath, fullPage: true });
   const html = await page.content();
   fs.writeFileSync(htmlPath, html, 'utf8');
@@ -125,6 +134,13 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
     partialFailures.push('dragging');
   }
 
+  try {
+    const supplementalFindings = await runSupplementalRuntimeChecks(page);
+    findings.push(...supplementalFindings);
+  } catch (err) {
+    partialFailures.push('supplemental-runtime');
+  }
+
   if (options.formTest) {
     try {
       const formFindings = await runFormTest(page, artifactsDir);
@@ -144,6 +160,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
       title,
       artifacts: {
         screenshot: toRel(screenshotPath),
+        viewportScreenshot,
         html: toRel(htmlPath),
         consoleLog: toRel(consolePath),
         axeRaw: axeResult ? toRel(axeResult.rawPath) : null,

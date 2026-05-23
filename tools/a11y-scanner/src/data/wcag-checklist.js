@@ -26,7 +26,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     automation: 'automated',
     category: 'media-text-alternatives',
     remediation: 'Add meaningful alt text or accessible names, and hide decorative non-text content from assistive technology.',
-    sourceRuleIds: ['image-alt', 'input-image-alt', 'svg-img-alt', 'button-name']
+    sourceRuleIds: ['image-alt', 'input-image-alt', 'svg-img-alt', 'button-name'],
+    aliases: ['A11Y-ALT-EXTRANEOUS-TEXT', 'A11Y-DUPLICATE-ALT-TEXT', 'A11Y-REDUNDANT-SVG-IMG']
   },
   {
     id: '1.2.1',
@@ -83,7 +84,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     automation: 'automated',
     category: 'structure-semantics',
     remediation: 'Use semantic HTML, explicit labels, proper headings, and valid ARIA relationships so content structure is programmatically exposed.',
-    sourceRuleIds: ['label', 'list', 'listitem', 'table-fake-caption', 'td-headers-attr', 'th-has-data-cells']
+    sourceRuleIds: ['label', 'list', 'listitem', 'table-fake-caption', 'td-headers-attr', 'th-has-data-cells'],
+    aliases: ['A11Y-LIST-EMPTY', 'A11Y-PRICE-RELATIONSHIP']
   },
   {
     id: '1.3.2',
@@ -154,7 +156,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     severity: 'Critical',
     automation: 'semi-automated',
     category: 'keyboard-access',
-    remediation: 'Ensure every interactive control can be reached and activated with keyboard focus and standard keyboard commands.'
+    remediation: 'Ensure every interactive control can be reached and activated with keyboard focus and standard keyboard commands.',
+    aliases: ['A11Y-TABINDEX-IN-BUTTON', 'A11Y-NESTED-INTERACTIVE']
   },
   {
     id: '2.1.2',
@@ -211,7 +214,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     severity: 'Medium',
     automation: 'semi-automated',
     category: 'timing-and-motion',
-    remediation: 'Add pause, stop, or hide controls for moving or auto-updating content unless the motion is essential.'
+    remediation: 'Add pause, stop, or hide controls for moving or auto-updating content unless the motion is essential.',
+    aliases: ['A11Y-AUTOPLAY-MEDIA']
   },
   {
     id: '2.3.1',
@@ -240,7 +244,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     automation: 'automated',
     category: 'navigation',
     remediation: 'Provide a working skip link, a main landmark, or an equivalent mechanism to bypass repeated blocks.',
-    sourceRuleIds: ['bypass']
+    sourceRuleIds: ['bypass', 'region', 'frame-title', 'landmark-unique'],
+    aliases: ['A11Y-FRAME-TITLE', 'A11Y-DUPLICATE-FRAME-TITLE']
   },
   {
     id: '2.4.2',
@@ -326,7 +331,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     severity: 'Medium',
     automation: 'semi-automated',
     category: 'labels-and-names',
-    remediation: 'Make sure the accessible name includes the visible label text in the same order users see it.'
+    remediation: 'Make sure the accessible name includes the visible label text in the same order users see it.',
+    aliases: ['A11Y-LABEL-IN-NAME']
   },
   {
     id: '2.5.4',
@@ -428,7 +434,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     automation: 'automated',
     category: 'markup-and-aria',
     remediation: 'Fix duplicate identifiers, broken ARIA references, and invalid markup patterns that can confuse assistive technology.',
-    sourceRuleIds: ['duplicate-id', 'aria-valid-attr-value', 'aria-valid-attr']
+    sourceRuleIds: ['duplicate-id', 'aria-valid-attr-value', 'aria-valid-attr'],
+    aliases: ['A11Y-EMPTY-ID']
   },
   {
     id: '4.1.2',
@@ -443,8 +450,8 @@ const WCAG_21_BASELINE_CRITERIA = [
     automation: 'automated',
     category: 'markup-and-aria',
     remediation: 'Provide accessible names, correct semantic roles, and programmatically exposed values and states for all interactive components.',
-    sourceRuleIds: ['button-name', 'aria-input-field-name', 'select-name', 'aria-required-attr', 'aria-allowed-attr'],
-    aliases: ['A11Y-FORM-ARIA-INVALID']
+    sourceRuleIds: ['button-name', 'aria-input-field-name', 'select-name', 'aria-required-attr', 'aria-allowed-attr', 'aria-allowed-role'],
+    aliases: ['A11Y-FORM-ARIA-INVALID', 'A11Y-ARIA-HIDDEN-FOCUSABLE']
   },
   {
     id: '1.2.4',
@@ -628,7 +635,9 @@ const WCAG_21_BASELINE_CRITERIA = [
     severity: 'Medium',
     automation: 'semi-automated',
     category: 'navigation',
-    remediation: 'Use clear, specific headings and labels that help users predict what each section or control is for.'
+    remediation: 'Use clear, specific headings and labels that help users predict what each section or control is for.',
+    sourceRuleIds: ['heading-order'],
+    aliases: ['A11Y-H1-COUNT', 'A11Y-HEADING-LEVEL-SKIPPED']
   },
   {
     id: '2.4.7',
@@ -686,7 +695,23 @@ const WCAG_21_BASELINE_CRITERIA = [
     severity: 'Low',
     automation: 'manual',
     category: 'predictable-behavior',
-    remediation: 'Use the same labels, accessible names, and icon meanings for controls that perform the same task.'
+    remediation: 'Use the same labels, accessible names, and icon meanings for controls that perform the same task.',
+    aliases: ['A11Y-INCONSISTENT-LINK-TEXT']
+  },
+  {
+    id: '3.2.5',
+    title: 'Change on Request',
+    level: 'AAA',
+    principle: 'Understandable',
+    version: '2.1',
+    description: 'Changes of context should happen only when users request them or when users can turn them off.',
+    scannerChecks: ['Flag links that open new tabs or windows without visible or programmatic warning text'],
+    exampleFailures: ['A link opens a new tab without saying so', 'A control launches a new window unexpectedly'],
+    severity: 'Low',
+    automation: 'semi-automated',
+    category: 'predictable-behavior',
+    remediation: 'Warn users before opening a new tab or window, preferably in visible link text and the accessible name.',
+    aliases: ['A11Y-TARGET-BLANK-WARNING']
   },
   {
     id: '3.3.3',
@@ -728,8 +753,7 @@ const WCAG_21_BASELINE_CRITERIA = [
     severity: 'Medium',
     automation: 'semi-automated',
     category: 'markup-and-aria',
-    remediation: 'Use appropriate live region patterns such as role="status" or role="alert" for meaningful status messages.',
-    sourceRuleIds: ['aria-allowed-role']
+    remediation: 'Use appropriate live region patterns such as role="status" or role="alert" for meaningful status messages.'
   }
 ];
 

@@ -7,87 +7,147 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <main class="shell">
-      <section class="hero">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <main id="main" class="shell">
+      <section class="hero masthead" aria-labelledby="masthead-title">
+        <div class="masthead-icon" aria-hidden="true">
+          <svg viewBox="0 0 72 72" focusable="false">
+            <path d="M21 12h27l9 9v34H21z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" />
+            <path d="M48 12v10h10" fill="none" stroke="currentColor" stroke-width="2.5" />
+            <path d="M28 24h15M28 32h9M28 40h12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="46" cy="35" r="8" fill="#dbeafe" stroke="rgb(60, 131, 246)" stroke-width="3" />
+            <path d="m40 42-9 9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+            <path d="M27 60h18M31 55l-3 5M41 55l3 5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+          </svg>
+        </div>
         <div class="hero-copy">
-          <p class="eyebrow">Standalone Accessibility Demo</p>
-          <h1>Run a one-page accessibility scan and open the generated report.</h1>
+          <p class="eyebrow">Accessibility Compliance Scanner</p>
+          <h1 id="masthead-title">Find out if your website is <span>Accessible</span> and <span>Compliant</span></h1>
           <p class="lede">
-            This app checks a single URL with the bundled scanner (automated WCAG-oriented rules and heuristics). Results are indicative only; manual review is required before any compliance claim.
+            Our WCAG-oriented scanner identifies web accessibility issues, generates downloadable reports, and gives exact instructions for fixing them.
           </p>
         </div>
-        <div class="hero-card">
+
+        <section class="panel scanner-panel" aria-label="Run accessibility scan">
+          <form id="demo-form" class="form">
+            <label for="url">Website URL</label>
+            <div class="form-row">
+              <input
+                id="url"
+                name="url"
+                type="text"
+                inputmode="url"
+                autocomplete="url"
+                placeholder="Type website URL"
+                required
+              />
+              <button type="submit" id="submit-button">Scan website</button>
+            </div>
+          </form>
+        </section>
+
+        <div class="hero-card compliance-strip" aria-label="Compliance frameworks">
+          <p>Supports review for</p>
           <div class="stat">
-            <span>Output</span>
-            <strong>HTML report, JSON findings, artifacts</strong>
+            <span aria-hidden="true">✓</span>
+            <strong>WCAG</strong>
           </div>
           <div class="stat">
-            <span>Scope</span>
-            <strong>One settled page snapshot only</strong>
+            <span aria-hidden="true">✓</span>
+            <strong>ADA</strong>
           </div>
           <div class="stat">
-            <span>Claim</span>
-            <strong>Automated checks plus known best practices</strong>
+            <span aria-hidden="true">✓</span>
+            <strong>EAA</strong>
+          </div>
+          <div class="stat">
+            <span aria-hidden="true">✓</span>
+            <strong>Section 508</strong>
+          </div>
+          <div class="stat">
+            <span aria-hidden="true">✓</span>
+            <strong>AODA</strong>
           </div>
         </div>
       </section>
 
-      <section class="panel">
-        <form id="demo-form" class="form">
-          <label for="url">Page URL</label>
-          <div class="form-row">
-            <input
-              id="url"
-              name="url"
-              type="text"
-              inputmode="url"
-              autocomplete="url"
-              placeholder="dataon.io or https://example.com"
-              required
-            />
-            <button type="submit" id="submit-button">Run scan</button>
-            <button type="button" id="demo-data-button" class="button-secondary">Data demo</button>
-          </div>
-          <p class="hint">
-            The scanner loads the page in Playwright, runs automated WCAG-oriented checks, and saves a printable HTML report plus JSON under <code>/runs</code>.
-            Use <strong>Data demo</strong> to load sample results without scanning.
-          </p>
-        </form>
-      </section>
-
-      <section class="panel">
+      <section class="panel status-panel" id="status-panel" aria-hidden="true">
         <div class="status-grid" id="status-grid"></div>
-        <div id="error-box" class="error-box hidden"></div>
       </section>
+      <div id="error-box" class="error-box hidden"></div>
 
       <section id="results" class="results hidden">
         <div class="dashboard-grid" id="results-dashboard" aria-label="Scan overview">
-          <article class="dashboard-card" id="dash-status">
-            <span class="dashboard-eyebrow">Status</span>
-            <p class="dashboard-stat" id="dash-violation-count"></p>
-            <p class="dashboard-lede" id="dash-status-copy"></p>
+          <article class="dashboard-card snapshot-card" id="dash-snapshot">
+            <div class="snapshot-header">
+              <span class="dashboard-eyebrow">Page snapshot</span>
+              <p class="dashboard-lede">Above-the-fold preview captured during the scan.</p>
+            </div>
+            <div class="snapshot-frame">
+              <img id="snapshot-image" alt="Above-the-fold screenshot of the scanned page" />
+              <div id="snapshot-placeholder" class="snapshot-placeholder">
+                <div class="scan-mock" aria-hidden="true">
+                  <div class="scan-mock-browser">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="scan-mock-hero"></div>
+                  <div class="scan-mock-row"></div>
+                  <div class="scan-mock-row short"></div>
+                  <div class="scan-mock-grid">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="scan-beam"></div>
+                </div>
+                <span class="snapshot-placeholder-copy">Snapshot unavailable</span>
+              </div>
+            </div>
           </article>
-          <article class="dashboard-card" id="dash-score">
-            <span class="dashboard-eyebrow">Accessibility score</span>
-            <p class="dashboard-stat dashboard-stat-score" id="dash-score-value"></p>
-            <p class="dashboard-lede">
-              Websites with a score of 70% or lower are considered at high risk in this tool.
-            </p>
-          </article>
-          <article class="dashboard-card" id="dash-risk">
-            <span class="dashboard-eyebrow">Compliance risk</span>
-            <p class="dashboard-risk-label" id="dash-risk-value"></p>
-            <p class="dashboard-lede" id="dash-risk-copy"></p>
+          <article class="dashboard-card dashboard-summary-card">
+            <div class="scan-progress-panel">
+              <span class="dashboard-eyebrow">Scan progress</span>
+              <p class="scan-progress-value" id="scan-progress-value">0%</p>
+              <div class="scan-progress-track" aria-hidden="true">
+                <div class="scan-progress-bar" id="scan-progress-bar"></div>
+              </div>
+              <p class="dashboard-lede" id="scan-progress-copy">
+                Loading the page, running checks, and preparing the snapshot.
+              </p>
+            </div>
+            <div class="dashboard-summary-item" id="dash-status">
+              <span class="dashboard-eyebrow">Status</span>
+              <p class="dashboard-stat" id="dash-violation-count"></p>
+              <p class="dashboard-lede" id="dash-status-copy"></p>
+            </div>
+            <div class="dashboard-summary-item" id="dash-score">
+              <span class="dashboard-eyebrow">Accessibility score</span>
+              <p class="dashboard-stat dashboard-stat-score" id="dash-score-value"></p>
+              <p class="dashboard-lede">
+                Websites with a score of 70% or lower are considered at high risk in this tool.
+              </p>
+            </div>
+            <div class="dashboard-summary-item" id="dash-risk">
+              <span class="dashboard-eyebrow">Compliance risk</span>
+              <p class="dashboard-risk-label" id="dash-risk-value"></p>
+              <p class="dashboard-lede" id="dash-risk-copy"></p>
+            </div>
           </article>
         </div>
-        <p class="dashboard-footnote" id="dashboard-footnote">
+        <p class="dashboard-footnote post-scan-content" id="dashboard-footnote">
           <sup aria-hidden="true">*</sup> Automated scan of a single page snapshot only. Not a complete WCAG audit and not a legal determination of conformance. Manual testing is required for any formal compliance claim.
         </p>
 
-        <div class="links-grid report-links">
+        <div class="links-grid report-links post-scan-content">
           <a class="link-card" id="report-link" target="_blank" rel="noreferrer">
             <span>Report</span>
             <strong>Open HTML report</strong>
+          </a>
+          <a class="link-card" id="report-pdf-link" target="_blank" rel="noreferrer" download>
+            <span>PDF</span>
+            <strong>Download PDF report</strong>
           </a>
           <a class="link-card" id="report-json-link" target="_blank" rel="noreferrer">
             <span>Data</span>
@@ -95,26 +155,42 @@
           </a>
         </div>
 
-        <div class="summary-grid summary-grid-single">
+        <div class="summary-grid summary-grid-single post-scan-content">
           <div class="summary-card" id="scan-summary"></div>
         </div>
 
-        <p id="demo-strip" class="demo-strip hidden" role="status" aria-live="polite"></p>
+        <p id="demo-strip" class="demo-strip hidden post-scan-content" role="status" aria-live="polite"></p>
 
-        <div class="panel results-panel">
+        <div class="panel results-panel post-scan-content">
           <h2>Violations</h2>
+          <div class="violations-toolbar" aria-label="Violation filters">
+            <fieldset>
+              <legend>Level</legend>
+              <label><input type="checkbox" value="A" data-filter-group="level" checked /> A</label>
+              <label><input type="checkbox" value="AA" data-filter-group="level" checked /> AA</label>
+              <label><input type="checkbox" value="AAA" data-filter-group="level" checked /> AAA</label>
+            </fieldset>
+            <fieldset>
+              <legend>Severity</legend>
+              <label><input type="checkbox" value="critical" data-filter-group="severity" checked /> Critical</label>
+              <label><input type="checkbox" value="high" data-filter-group="severity" checked /> High</label>
+              <label><input type="checkbox" value="moderate" data-filter-group="severity" checked /> Moderate</label>
+              <label><input type="checkbox" value="low" data-filter-group="severity" checked /> Low</label>
+            </fieldset>
+            <p id="issues-filter-summary" class="filter-summary" aria-live="polite"></p>
+          </div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Criterion</th>
-                  <th>Level</th>
-                  <th>Severity</th>
-                  <th>Title</th>
-                  <th>WCAG Ref</th>
-                  <th>Selector</th>
-                  <th>Manual Review</th>
+                  <th><button type="button" class="sort-button" data-sort-key="id">ID</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="criterion">Criterion</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="level">Level</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="severity">Severity</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="title">Title</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="wcagRef">WCAG Ref</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="selector">Selector</button></th>
+                  <th><button type="button" class="sort-button" data-sort-key="manualReview">Manual Review</button></th>
                 </tr>
               </thead>
               <tbody id="issues-body"></tbody>
@@ -122,7 +198,7 @@
           </div>
         </div>
 
-        <div class="panel">
+        <div class="panel post-scan-content">
           <h2>Disclaimer</h2>
           <p class="hint disclaimer-hint">
             The violations table is the full list of what this snapshot detected (rule id, WCAG mapping where available, selector, etc.).

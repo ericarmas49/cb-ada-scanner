@@ -15,6 +15,12 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
 
+for (const name of ['ex1', 'ex2', 'ex3', 'ex4']) {
+  app.get(`/${name}`, (_req, res) => {
+    res.sendFile(path.join(__dirname, 'public', `${name}.html`));
+  });
+}
+
 app.post('/api/demo', async (req, res) => {
   try {
     const { url } = req.body || {};

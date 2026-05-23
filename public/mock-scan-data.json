@@ -3,6 +3,7 @@
   "runId": "00000000-0000-4000-8000-00000000demo",
   "status": "done",
   "reportUrl": "#demo-report",
+  "reportPdfUrl": "#demo-pdf",
   "reportJsonUrl": "#demo-json",
   "summary": {
     "critical": 3,
@@ -13,8 +14,9 @@
   "dashboard": {
     "violationCount": 12,
     "criticalCount": 3,
-    "accessibilityScore": 55,
-    "complianceRisk": "high"
+    "accessibilityScore": 56,
+    "grade": "F",
+    "complianceRisk": "severe"
   },
   "issues": [
     {
