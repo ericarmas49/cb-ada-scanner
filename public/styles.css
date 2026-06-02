@@ -159,7 +159,7 @@ input:focus-visible {
 }
 
 body.scan-active .masthead {
-  margin-top: calc(150px - 1.6rem);
+  margin-top: calc(100px - 1.6rem);
   transform: translateY(0);
 }
 
@@ -647,6 +647,10 @@ code {
   margin: 1.5rem 0;
 }
 
+.dashboard-preview.review-preview {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .metric-card,
 .deliverable-card,
 .palette-card {
@@ -675,6 +679,70 @@ code {
   font-size: 2rem;
   font-weight: 500;
   line-height: 1;
+}
+
+.review-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.review-list li {
+  border-top: 1px solid var(--line);
+  padding-top: 0.85rem;
+}
+
+.review-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.review-list span {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.review-list p {
+  margin: 0.35rem 0 0;
+}
+
+.review-packet {
+  margin-top: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.review-packet summary {
+  cursor: pointer;
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.review-packet pre {
+  overflow: auto;
+  margin: 0.75rem 0;
+  border-radius: 0.85rem;
+  background: rgba(17, 24, 39, 0.06);
+  padding: 0.85rem;
+  white-space: pre-wrap;
+}
+
+.review-packet textarea {
+  width: 100%;
+  margin-top: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--surface);
+  color: var(--ink);
+  font: 0.86rem/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  padding: 0.85rem;
+  resize: vertical;
 }
 
 .story-panel {
@@ -1099,7 +1167,7 @@ body.scan-active .status-panel {
 }
 
 .links-grid.report-links {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   max-width: none;
 }
 
@@ -1114,6 +1182,11 @@ body.scan-active .status-panel {
 .link-card:hover {
   border-color: var(--accent);
   color: var(--ink);
+}
+
+.link-card[aria-disabled="true"] {
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .link-card strong,
@@ -1199,9 +1272,21 @@ body.scan-active .status-panel {
 
 table {
   width: 100%;
-  min-width: 700px;
+  min-width: 980px;
   border-collapse: separate;
   border-spacing: 0;
+}
+
+#issues-body td:nth-child(6),
+thead th:nth-child(6) {
+  width: 16%;
+  min-width: 11rem;
+}
+
+#issues-body td:nth-child(7),
+thead th:nth-child(7) {
+  width: 28%;
+  min-width: 18rem;
 }
 
 th,
@@ -1287,7 +1372,7 @@ th {
 }
 
 .disclaimer-hint {
-  max-width: 62rem;
+  max-width: 100%;
   margin: 0;
 }
 
@@ -1300,6 +1385,77 @@ th {
   color: #123b8f;
   font-size: 0.92rem;
   line-height: 1.45;
+}
+
+.theme-shell {
+  display: block;
+}
+
+.theme-masthead {
+  margin-top: clamp(2rem, 8vh, 5rem);
+}
+
+.theme-upload-panel {
+  width: min(100%, 820px);
+  margin: 1.45rem auto 0;
+  padding: 0.8rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.theme-upload-panel::before {
+  display: none;
+}
+
+.theme-upload-form {
+  gap: 0.75rem;
+}
+
+.theme-upload-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.theme-upload-row input[type="file"] {
+  min-height: 3.1rem;
+  border-radius: 0.85rem;
+  background: #fff;
+  padding: 0.75rem;
+}
+
+.theme-upload-row button {
+  min-height: 3.1rem;
+  border-radius: 0.85rem;
+  padding-inline: 1.6rem;
+}
+
+.theme-upload-hint,
+.theme-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.theme-status-panel {
+  width: min(100%, 820px);
+  margin-right: auto;
+  margin-left: auto;
+  border-radius: 1.25rem;
+}
+
+.theme-status[data-tone="success"] {
+  color: var(--success);
+}
+
+.theme-status[data-tone="error"] {
+  color: var(--danger);
+}
+
+.theme-status[data-tone="scanning"] {
+  color: var(--accent-dark);
 }
 
 @media (max-width: 960px) {
@@ -1324,6 +1480,10 @@ th {
   }
 
   .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-upload-row {
     grid-template-columns: 1fr;
   }
 

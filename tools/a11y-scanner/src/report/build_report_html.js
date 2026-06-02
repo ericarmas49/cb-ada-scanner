@@ -24,6 +24,43 @@ function groupFindings(findings) {
   return Array.from(map.entries());
 }
 
+function fixTypeLabel(item) {
+  const fixType = item.fixType || item?.evidence?.extra?.fixType || '';
+  if (fixType === 'safe-auto-fix') return 'Safe auto-fix';
+  if (fixType === 'manual-review') return 'Manual review';
+  if (fixType === 'suggested-fix') return 'Suggested fix';
+  return '';
+}
+
+function formatReportDate(date = new Date()) {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date);
+}
+
+function formatShortReportDate(value) {
+  const date = value ? new Date(value) : new Date();
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date);
+}
+
+function siteNameFromReport(report) {
+  const title = String(report.page?.title || '').trim();
+  if (title) return title;
+
+  try {
+    return new URL(report.scan?.finalUrl || report.scan?.inputUrl || '').hostname.replace(/^www\./i, '');
+  } catch {
+    return report.scan?.inputUrl || '';
+  }
+}
+
 function renderFindingItem(item) {
   const screenshot = item?.evidence?.screenshot
     ? `<img class="screenshot" src="${escapeHtml(item.evidence.screenshot)}" alt="Evidence screenshot" />`
@@ -35,12 +72,14 @@ function renderFindingItem(item) {
   const automationLine = item.automation
     ? `<p class="meta">Check type: ${escapeHtml(item.automation)} | Category: ${escapeHtml(item.category || '')}</p>`
     : '';
+  const fixType = fixTypeLabel(item);
+  const fixTypePill = fixType ? `<span class="pill">${escapeHtml(fixType)}</span>` : '';
 
   return `
     <div class="finding-item">
       <div class="finding-meta">
         <span class="pill ${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
-        <span class="pill">Confidence: ${escapeHtml(item.confidence)}</span>
+        ${fixTypePill}
         ${manual}
       </div>
       ${wcagLine}
@@ -53,15 +92,10 @@ function renderFindingItem(item) {
 
 function renderFindingGroup(ruleId, items) {
   const first = items[0];
-  const occurrenceCount = items.reduce((sum, item) => sum + (item.occurrences || 1), 0);
 
   return `
     <div class="finding-group">
       <h3>${escapeHtml(first.title)}</h3>
-      <p class="meta">Rule ID: ${escapeHtml(ruleId)} | Occurrences: ${occurrenceCount}</p>
-      ${first.criterionId ? `<p class="meta">Criterion: WCAG ${escapeHtml(first.criterionId)} | ${escapeHtml(first.criterionTitle || '')} | Level ${escapeHtml(first.complianceLevel || '')} | ${escapeHtml(first.principle || '')}</p>` : ''}
-      <p>${escapeHtml(first.why || '')}</p>
-      ${first.remediation || first.fix ? `<p><strong>Reference (informational):</strong> ${escapeHtml(first.remediation || first.fix)}</p>` : ''}
       ${items.map(renderFindingItem).join('')}
     </div>
   `;
@@ -76,7 +110,6 @@ function renderManualReview(items) {
     <div class="finding-item">
       <div class="finding-meta">
         <span class="pill ${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
-        <span class="pill">Confidence: ${escapeHtml(item.confidence)}</span>
       </div>
       <div><strong>${escapeHtml(item.title)}</strong></div>
       ${item.criterionId ? `<p class="meta">WCAG ${escapeHtml(item.criterionId)} | ${escapeHtml(item.criterionTitle || '')} | Level ${escapeHtml(item.complianceLevel || '')} | ${escapeHtml(item.principle || '')}</p>` : ''}
@@ -107,11 +140,8 @@ function buildReportHtml(report) {
   <header class="header">
     <div>
       <h1>Accessibility Report</h1>
-      <p class="meta">Generated ${escapeHtml(new Date().toISOString())}</p>
-    </div>
-    <div class="score">
-      <div class="score-label">Score</div>
-      <div class="score-value">${escapeHtml(report.summary?.score ?? '')}</div>
+      <p class="report-site">${escapeHtml(siteNameFromReport(report))}</p>
+      <p class="report-generated">Generated ${escapeHtml(formatReportDate())}</p>
     </div>
   </header>
 
@@ -142,10 +172,8 @@ function buildReportHtml(report) {
     <h2>What Was Tested</h2>
     <ul class="meta-list">
       <li><strong>Input URL:</strong> ${escapeHtml(report.scan?.inputUrl || '')}</li>
-      <li><strong>Final URL:</strong> ${escapeHtml(report.scan?.finalUrl || '')}</li>
       <li><strong>Title:</strong> ${escapeHtml(report.page?.title || '')}</li>
-      <li><strong>Scan Started:</strong> ${escapeHtml(report.scan?.startedAt || '')}</li>
-      <li><strong>Scan Finished:</strong> ${escapeHtml(report.scan?.finishedAt || '')}</li>
+      <li><strong>Scan Started:</strong> ${escapeHtml(formatShortReportDate(report.scan?.startedAt))}</li>
     </ul>
   </section>
 

@@ -126,7 +126,7 @@
               <span class="dashboard-eyebrow">Accessibility score</span>
               <p class="dashboard-stat dashboard-stat-score" id="dash-score-value"></p>
               <p class="dashboard-lede">
-                Websites with a score of 70% or lower are considered at high risk in this tool.
+                Websites with a score of 90% or lower are considered at high risk in this tool.
               </p>
             </div>
             <div class="dashboard-summary-item" id="dash-risk">
@@ -149,14 +149,11 @@
             <span>PDF</span>
             <strong>Download PDF report</strong>
           </a>
-          <a class="link-card" id="report-json-link" target="_blank" rel="noreferrer">
-            <span>Data</span>
-            <strong>Open JSON findings</strong>
-          </a>
         </div>
 
-        <div class="summary-grid summary-grid-single post-scan-content">
+        <div class="summary-grid post-scan-content">
           <div class="summary-card" id="scan-summary"></div>
+          <div class="summary-card" id="technology-summary"></div>
         </div>
 
         <p id="demo-strip" class="demo-strip hidden post-scan-content" role="status" aria-live="polite"></p>
@@ -190,7 +187,6 @@
                   <th><button type="button" class="sort-button" data-sort-key="title">Title</button></th>
                   <th><button type="button" class="sort-button" data-sort-key="wcagRef">WCAG Ref</button></th>
                   <th><button type="button" class="sort-button" data-sort-key="selector">Selector</button></th>
-                  <th><button type="button" class="sort-button" data-sort-key="manualReview">Manual Review</button></th>
                 </tr>
               </thead>
               <tbody id="issues-body"></tbody>

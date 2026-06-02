@@ -18,6 +18,22 @@
     "grade": "F",
     "complianceRisk": "severe"
   },
+  "technologies": {
+    "primary": "WordPress",
+    "summary": "WordPress, React",
+    "technologies": [
+      {
+        "name": "WordPress",
+        "type": "CMS",
+        "evidence": "WordPress asset paths or generator metadata"
+      },
+      {
+        "name": "React",
+        "type": "JavaScript framework",
+        "evidence": "React DOM markers or script names"
+      }
+    ]
+  },
   "issues": [
     {
       "id": "image-alt",

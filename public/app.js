@@ -14,8 +14,8 @@ const errorBox = document.querySelector('#error-box');
 const results = document.querySelector('#results');
 const reportLink = document.querySelector('#report-link');
 const reportPdfLink = document.querySelector('#report-pdf-link');
-const reportJsonLink = document.querySelector('#report-json-link');
 const scanSummary = document.querySelector('#scan-summary');
+const technologySummary = document.querySelector('#technology-summary');
 const resultsDashboard = document.querySelector('#results-dashboard');
 const dashViolationCount = document.querySelector('#dash-violation-count');
 const dashStatusCopy = document.querySelector('#dash-status-copy');
@@ -88,6 +88,21 @@ function summaryMarkup(summary) {
     <span>Scan summary</span>
     <strong>Critical ${s.critical} | High ${s.high}</strong>
     <p>Moderate ${s.moderate} | Low ${s.low}</p>
+  `;
+}
+
+function technologyMarkup(technologies) {
+  const data = technologies && typeof technologies === 'object' ? technologies : {};
+  const items = Array.isArray(data.technologies) ? data.technologies : [];
+  const primary = data.primary || (items[0]?.name) || 'Not detected';
+  const detail = items.length
+    ? items.slice(0, 5).map((item) => `${item.name}${item.type ? ` (${item.type})` : ''}`).join(', ')
+    : data.summary || 'No common CMS or framework markers detected.';
+
+  return `
+    <span>Technology detected</span>
+    <strong>${escapeHtml(primary)}</strong>
+    <p>${escapeHtml(detail)}</p>
   `;
 }
 
@@ -257,8 +272,22 @@ function wcagRefCell(issue) {
   return `<a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
 }
 
-function boolText(value) {
-  return value ? 'Yes' : 'No';
+function displayCriterionId(issue) {
+  return issue.criterionId || 'Update';
+}
+
+function displayComplianceLevel(issue) {
+  return issue.complianceLevel || 'AA';
+}
+
+function friendlyIssueId(id) {
+  return String(id || '')
+    .replace(/^WP-STATIC-/i, '')
+    .replace(/^AXE-/i, '')
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ') || 'Update';
 }
 
 function selectedFilterValues(group) {
@@ -272,7 +301,7 @@ function selectedFilterValues(group) {
 function issueMatchesFilters(issue) {
   const selectedLevels = selectedFilterValues('level');
   const selectedSeverities = selectedFilterValues('severity');
-  const level = String(issue.complianceLevel || '').toUpperCase();
+  const level = String(displayComplianceLevel(issue)).toUpperCase();
   const severity = String(issue.severity || '').toLowerCase();
 
   if (LEVEL_FILTERS.includes(level) && !selectedLevels.has(level)) return false;
@@ -281,14 +310,13 @@ function issueMatchesFilters(issue) {
 }
 
 function sortValueForIssue(issue, key) {
-  if (key === 'id') return issue.id || '';
-  if (key === 'criterion') return `${issue.criterionId || ''} ${issue.criterionTitle || ''}`.trim();
-  if (key === 'level') return String(issue.complianceLevel || '').toUpperCase();
+  if (key === 'id') return friendlyIssueId(issue.id);
+  if (key === 'criterion') return `${displayCriterionId(issue)} ${issue.criterionTitle || ''}`.trim();
+  if (key === 'level') return String(displayComplianceLevel(issue)).toUpperCase();
   if (key === 'severity') return String(issue.severity || '').toLowerCase();
   if (key === 'title') return issue.title || '';
   if (key === 'wcagRef') return wcagRefForIssue(issue).label;
   if (key === 'selector') return issue.selector || '';
-  if (key === 'manualReview') return issue.manual_review_required ? 1 : 0;
   return '';
 }
 
@@ -307,8 +335,6 @@ function compareIssues(left, right) {
     result =
       (severityOrder.get(leftValue) ?? Number.MAX_SAFE_INTEGER) -
       (severityOrder.get(rightValue) ?? Number.MAX_SAFE_INTEGER);
-  } else if (key === 'manualReview') {
-    result = sortValueForIssue(left, key) - sortValueForIssue(right, key);
   } else {
     result = tableCollator.compare(String(sortValueForIssue(left, key)), String(sortValueForIssue(right, key)));
   }
@@ -347,21 +373,20 @@ function renderIssuesTable() {
   rows.forEach((issue) => {
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${escapeHtml(issue.id)}</td>
-      <td>${escapeHtml(issue.criterionId || '-')}</td>
-      <td>${escapeHtml(issue.complianceLevel || '-')}</td>
+      <td title="${escapeHtml(issue.id || '')}">${escapeHtml(friendlyIssueId(issue.id))}</td>
+      <td>${escapeHtml(displayCriterionId(issue))}</td>
+      <td>${escapeHtml(displayComplianceLevel(issue))}</td>
       <td>${escapeHtml(issue.severity)}</td>
       <td>${escapeHtml(issue.title)}</td>
       <td>${wcagRefCell(issue)}</td>
       <td>${escapeHtml(issue.selector || '-')}</td>
-      <td>${boolText(issue.manual_review_required)}</td>
     `;
     issuesBody.appendChild(row);
   });
 
   if (rows.length === 0) {
     const row = document.createElement('tr');
-    row.innerHTML = '<td colspan="8">No violations match the selected filters.</td>';
+    row.innerHTML = '<td colspan="7">No violations match the selected filters.</td>';
     issuesBody.appendChild(row);
   }
 
@@ -389,11 +414,8 @@ function renderResults(data) {
     reportPdfLink.title = isDemoPayload || !data.reportPdfUrl ? 'Demo only — no PDF file is available.' : '';
     reportPdfLink.toggleAttribute('aria-disabled', !data.reportPdfUrl);
   }
-  if (reportJsonLink) {
-    reportJsonLink.href = data.reportJsonUrl || '#';
-    reportJsonLink.title = isDemoPayload ? 'Demo only — no JSON file is available.' : '';
-  }
   if (scanSummary) scanSummary.innerHTML = summaryMarkup(pickSummary(data));
+  if (technologySummary) technologySummary.innerHTML = technologyMarkup(data.technologies);
 
   currentIssues = data.issues || [];
   renderIssuesTable();

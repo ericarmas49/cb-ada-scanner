@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WordPress Theme Accessibility Scanner</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <main id="main" class="shell theme-shell">
+      <section class="hero masthead theme-masthead" aria-labelledby="theme-title">
+        <div class="masthead-icon" aria-hidden="true">
+          <svg viewBox="0 0 72 72" focusable="false">
+            <path d="M18 16h36v40H18z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" />
+            <path d="M26 27h20M26 36h14M26 45h18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M50 20l7 7-7 7" fill="none" stroke="rgb(60, 131, 246)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="hero-copy">
+          <p class="eyebrow">WordPress Theme Accessibility Review</p>
+          <h1 id="theme-title">Scan a WordPress theme ZIP for <span>code-level</span> ADA risks</h1>
+          <p class="lede">
+            Upload a theme package to review PHP, HTML, CSS, and JavaScript for accessibility issues before runtime validation.
+          </p>
+        </div>
+
+        <section class="panel scanner-panel theme-upload-panel" aria-label="Upload WordPress theme zip">
+          <form id="theme-scan-form" class="form theme-upload-form">
+            <label for="theme-zip">WordPress theme ZIP</label>
+            <div class="theme-upload-row">
+              <input id="theme-zip" name="themeZip" type="file" accept=".zip,application/zip" required />
+              <button type="submit" id="theme-submit-button">Scan theme</button>
+            </div>
+            <p class="theme-upload-hint">
+              Phase 1 performs static code review only. Uploaded PHP is not executed.
+            </p>
+          </form>
+        </section>
+      </section>
+
+      <section class="panel theme-status-panel" aria-live="polite">
+        <p id="theme-status" class="theme-status">Choose a WordPress theme ZIP to begin.</p>
+      </section>
+
+      <section id="theme-results" class="results hidden" aria-labelledby="theme-results-title">
+        <div class="results-heading">
+          <div>
+            <span class="dashboard-eyebrow">Theme scan results</span>
+            <h2 id="theme-results-title">Static accessibility review</h2>
+          </div>
+          <p class="hint" id="theme-meta"></p>
+        </div>
+
+        <div class="dashboard-preview">
+          <article class="metric-card">
+            <span>Violations</span>
+            <strong id="theme-violation-count">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Accessibility score</span>
+            <strong id="theme-score">0%</strong>
+          </article>
+          <article class="metric-card">
+            <span>Compliance risk</span>
+            <strong id="theme-risk">Not scanned</strong>
+          </article>
+        </div>
+
+        <div class="links-grid report-links">
+          <a class="link-card" id="theme-report-link" target="_blank" rel="noreferrer">
+            <span>Report</span>
+            <strong>Open HTML report</strong>
+          </a>
+          <a class="link-card" id="theme-pdf-link" target="_blank" rel="noreferrer" download>
+            <span>PDF</span>
+            <strong>Download PDF report</strong>
+          </a>
+          <a class="link-card" id="theme-json-link" target="_blank" rel="noreferrer">
+            <span>Data</span>
+            <strong>Open JSON findings</strong>
+          </a>
+          <a class="link-card" id="theme-remediation-link" target="_blank" rel="noreferrer">
+            <span>Remediation</span>
+            <strong>Open fix report</strong>
+          </a>
+          <a class="link-card" id="theme-fixed-link" target="_blank" rel="noreferrer" download>
+            <span>Fixed ZIP</span>
+            <strong>Download fixed theme</strong>
+          </a>
+        </div>
+
+        <div class="summary-grid summary-grid-single">
+          <div class="summary-card" id="theme-summary"></div>
+        </div>
+
+        <div class="summary-grid summary-grid-single">
+          <div class="summary-card" id="theme-remediation"></div>
+        </div>
+
+        <div class="summary-grid summary-grid-single">
+          <div class="summary-card" id="theme-remediation-detail"></div>
+        </div>
+
+        <div class="panel results-panel">
+          <h2>Remediation Review</h2>
+          <div class="dashboard-preview review-preview" id="theme-review-counts"></div>
+          <div class="summary-grid summary-grid-single">
+            <div class="summary-card" id="theme-learning-queue"></div>
+          </div>
+        </div>
+
+        <div class="panel results-panel">
+          <h2>Theme Findings</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Criterion</th>
+                  <th>Title</th>
+                  <th>File</th>
+                  <th>Line</th>
+                  <th>Fix Path</th>
+                  <th>Manual Review</th>
+                </tr>
+              </thead>
+              <tbody id="theme-issues-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Scope</h2>
+          <p class="hint disclaimer-hint">
+            This is a static code review of theme files. It does not execute PHP, render WordPress templates, evaluate final contrast,
+            or prove legal compliance. Runtime WordPress validation is planned for a later phase.
+          </p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/wp-theme-scanner.js"></script>
+  </body>
+</html>

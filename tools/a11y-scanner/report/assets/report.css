@@ -23,11 +23,10 @@ body {
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 32px 48px;
-  background: linear-gradient(135deg, #f2e9df 0%, #e5e0d2 100%);
+  display: block;
+  min-height: 215px;
+  padding: 42px 34px;
+  background: #f2eadf;
   border-bottom: 2px solid var(--line);
 }
 
@@ -37,6 +36,20 @@ h1, h2, h3 {
 
 h1 {
   font-size: 32px;
+  line-height: 1.15;
+}
+
+.report-site {
+  margin: 18px 0 2px;
+  color: var(--ink);
+  font-size: 26px;
+  line-height: 1.25;
+}
+
+.report-generated {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .section {
