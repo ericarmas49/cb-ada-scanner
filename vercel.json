@@ -7,7 +7,12 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "tools/a11y-scanner/**"
+        ]
+      }
     }
   ],
   "routes": [
