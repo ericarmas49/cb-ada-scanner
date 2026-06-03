@@ -9,7 +9,9 @@ import { runWpThemeScan } from './lib/runWpThemeScan.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const uploadRoot = path.join(__dirname, 'runs', '_uploads');
+const dataRoot = process.env.VERCEL ? path.join('/tmp', 'accessibility-demo-app') : __dirname;
+const runsRoot = path.join(dataRoot, 'runs');
+const uploadRoot = path.join(runsRoot, '_uploads');
 fs.mkdirSync(uploadRoot, { recursive: true });
 const upload = multer({
   dest: uploadRoot,
@@ -20,7 +22,7 @@ const upload = multer({
 });
 
 app.use(express.json({ limit: '2mb' }));
-app.use('/runs', express.static(path.join(__dirname, 'runs'), { extensions: ['html'] }));
+app.use('/runs', express.static(runsRoot, { extensions: ['html'] }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/health', (_req, res) => {
@@ -48,6 +50,7 @@ app.post('/api/demo', async (req, res) => {
     const origin = `${req.protocol}://${req.get('host')}`;
     const result = runAccessibilityDemo({
       appRoot: __dirname,
+      outputRoot: dataRoot,
       url,
       origin
     });
@@ -77,7 +80,7 @@ app.post('/api/wp-theme-scan', upload.single('themeZip'), async (req, res) => {
 
     const origin = `${req.protocol}://${req.get('host')}`;
     const result = await runWpThemeScan({
-      appRoot: __dirname,
+      appRoot: dataRoot,
       zipPath: req.file.path,
       originalName: req.file.originalname,
       origin

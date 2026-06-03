@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "buildCommand": "PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install chromium",
+  "env": {
+    "PLAYWRIGHT_BROWSERS_PATH": "0"
+  },
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ]
+}
