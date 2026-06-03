@@ -23,6 +23,9 @@ const upload = multer({
 
 app.use(express.json({ limit: '2mb' }));
 app.use('/runs', express.static(runsRoot, { extensions: ['html'] }));
+app.use('/runs', (_req, res) => {
+  res.status(404).type('text/plain').send('Artifact not found');
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/health', (_req, res) => {
@@ -65,6 +68,27 @@ app.post('/api/demo', async (req, res) => {
       error: message
     });
   }
+});
+
+app.post('/api/pdf-lead', (req, res) => {
+  const { email, siteName, runId, reportUrl } = req.body || {};
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    res.status(400).json({ error: 'Enter a valid email address.' });
+    return;
+  }
+
+  const lead = {
+    email: normalizedEmail,
+    siteName: String(siteName || ''),
+    runId: String(runId || ''),
+    reportUrl: String(reportUrl || ''),
+    submittedAt: new Date().toISOString()
+  };
+
+  // TODO: Wire this to the production email provider once recipients/API credentials are configured.
+  console.info('PDF lead submitted:', lead);
+  res.json({ ok: true });
 });
 
 app.post('/api/wp-theme-scan', upload.single('themeZip'), async (req, res) => {

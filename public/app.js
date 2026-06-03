@@ -14,6 +14,11 @@ const errorBox = document.querySelector('#error-box');
 const results = document.querySelector('#results');
 const reportLink = document.querySelector('#report-link');
 const reportPdfLink = document.querySelector('#report-pdf-link');
+const pdfEmailModal = document.querySelector('#pdf-email-modal');
+const pdfEmailForm = document.querySelector('#pdf-email-form');
+const pdfEmailInput = document.querySelector('#pdf-email');
+const pdfEmailCopy = document.querySelector('#pdf-email-copy');
+const pdfEmailError = document.querySelector('#pdf-email-error');
 const scanSummary = document.querySelector('#scan-summary');
 const technologySummary = document.querySelector('#technology-summary');
 const resultsDashboard = document.querySelector('#results-dashboard');
@@ -32,6 +37,12 @@ const issuesFilterSummary = document.querySelector('#issues-filter-summary');
 const sortButtons = Array.from(document.querySelectorAll('[data-sort-key]'));
 const filterInputs = Array.from(document.querySelectorAll('[data-filter-group]'));
 const demoStrip = document.querySelector('#demo-strip');
+const servicesMenu = document.querySelector('[data-services-menu]');
+const servicesButton = document.querySelector('[data-services-button]');
+const servicesDropdown = document.querySelector('[data-services-dropdown]');
+const mobileToggle = document.querySelector('[data-mobile-toggle]');
+const mobileMenu = document.querySelector('[data-mobile-menu]');
+const chatButtons = Array.from(document.querySelectorAll('[data-open-chat]'));
 
 const LEVEL_FILTERS = ['A', 'AA', 'AAA'];
 const SEVERITY_FILTERS = ['critical', 'high', 'moderate', 'low'];
@@ -40,6 +51,10 @@ const severityOrder = new Map(SEVERITY_FILTERS.map((severity, index) => [severit
 const tableCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 let currentIssues = [];
 let issueSort = { key: null, direction: 'asc' };
+let activeArtifactUrls = [];
+let currentScanData = null;
+let pendingPdfDownload = null;
+let servicesCloseTimer = null;
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -47,6 +62,35 @@ function normalizeUrl(value) {
   if (trimmed.startsWith('https://')) return trimmed;
   if (trimmed.startsWith('http://')) return trimmed.replace('http://', 'https://');
   return `https://${trimmed}`;
+}
+
+function setServicesOpen(isOpen, focusFirstItem = false) {
+  if (!servicesButton || !servicesDropdown) return;
+  servicesButton.setAttribute('aria-expanded', String(isOpen));
+  servicesDropdown.hidden = !isOpen;
+  if (isOpen && focusFirstItem) {
+    servicesDropdown.querySelector('a')?.focus();
+  }
+}
+
+function scheduleServicesClose() {
+  window.clearTimeout(servicesCloseTimer);
+  servicesCloseTimer = window.setTimeout(() => setServicesOpen(false), 150);
+}
+
+function setMobileMenuOpen(isOpen) {
+  if (!mobileToggle || !mobileMenu) return;
+  mobileToggle.setAttribute('aria-expanded', String(isOpen));
+  mobileToggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+  mobileMenu.hidden = !isOpen;
+}
+
+function openCircleBloxChat() {
+  if (window.LiveChatWidget?.call) {
+    window.LiveChatWidget.call('maximize');
+    return;
+  }
+  window.location.href = 'https://circleblox.com/';
 }
 
 function renderStatuses(activeState) {
@@ -143,8 +187,9 @@ function renderDashboard(data) {
   results.classList.remove('scanning');
 
   if (snapshotImage && snapshotPlaceholder) {
-    if (data.snapshotUrl) {
-      snapshotImage.src = data.snapshotUrl;
+    const snapshotSrc = data.inlineArtifacts?.snapshotDataUrl || data.snapshotUrl;
+    if (snapshotSrc) {
+      snapshotImage.src = snapshotSrc;
       snapshotImage.classList.remove('hidden');
       snapshotPlaceholder.classList.add('hidden');
     } else {
@@ -231,6 +276,77 @@ function escapeHtml(value) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+function revokeArtifactUrls() {
+  activeArtifactUrls.forEach((url) => URL.revokeObjectURL(url));
+  activeArtifactUrls = [];
+}
+
+function blobUrl(content, type) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  activeArtifactUrls.push(url);
+  return url;
+}
+
+async function dataUrlToBlobUrl(dataUrl) {
+  const response = await fetch(dataUrl);
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  activeArtifactUrls.push(url);
+  return url;
+}
+
+function siteNameFromScan(data) {
+  const source = data?.finalUrl || data?.inputUrl || urlInput?.value || '';
+  try {
+    return new URL(normalizeUrl(source)).hostname.replace(/^www\./i, '');
+  } catch {
+    return source || 'your site';
+  }
+}
+
+function closePdfEmailModal() {
+  pdfEmailModal?.classList.add('hidden');
+  pdfEmailError?.classList.add('hidden');
+  if (pdfEmailError) pdfEmailError.textContent = '';
+}
+
+function openPdfEmailModal() {
+  if (!pendingPdfDownload || !pdfEmailModal || !pdfEmailInput || !pdfEmailCopy) return;
+  const siteName = siteNameFromScan(currentScanData);
+  pdfEmailCopy.textContent = `Please enter your email to get your free ADA Compliance results for ${siteName}.`;
+  pdfEmailInput.value = '';
+  pdfEmailError?.classList.add('hidden');
+  pdfEmailModal.classList.remove('hidden');
+  pdfEmailInput.focus();
+}
+
+function triggerPdfDownload() {
+  if (!pendingPdfDownload?.href) return;
+  const link = document.createElement('a');
+  link.href = pendingPdfDownload.href;
+  if (pendingPdfDownload.fileName) link.download = pendingPdfDownload.fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+async function submitPdfLead(email) {
+  const response = await fetch('/api/pdf-lead', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      siteName: siteNameFromScan(currentScanData),
+      runId: currentScanData?.runId || '',
+      reportUrl: currentScanData?.reportUrl || ''
+    })
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Could not submit email.');
+  }
 }
 
 /** Slug matches W3C Understanding / TR fragment IDs for success criteria titles (e.g. non-text-content). */
@@ -398,7 +514,10 @@ function renderIssuesTable() {
   updateSortControls();
 }
 
-function renderResults(data) {
+async function renderResults(data) {
+  revokeArtifactUrls();
+  currentScanData = data;
+  pendingPdfDownload = null;
   document.body.classList.remove('is-scanning');
   document.body.classList.add('scan-active');
   renderDashboard(data);
@@ -406,13 +525,26 @@ function renderResults(data) {
     data.runId === '00000000-0000-4000-8000-00000000demo' ||
     (typeof data.reportUrl === 'string' && data.reportUrl.startsWith('#'));
   if (reportLink) {
-    reportLink.href = data.reportUrl || '#';
+    reportLink.href = data.inlineArtifacts?.reportHtml ? blobUrl(data.inlineArtifacts.reportHtml, 'text/html') : data.reportUrl || '#';
     reportLink.title = isDemoPayload ? 'Demo only — no report file is available.' : '';
   }
   if (reportPdfLink) {
-    reportPdfLink.href = data.reportPdfUrl || '#';
-    reportPdfLink.title = isDemoPayload || !data.reportPdfUrl ? 'Demo only — no PDF file is available.' : '';
-    reportPdfLink.toggleAttribute('aria-disabled', !data.reportPdfUrl);
+    const hasPdf = Boolean(data.reportPdfUrl || data.inlineArtifacts?.reportPdfDataUrl);
+    const pdfHref = data.inlineArtifacts?.reportPdfDataUrl
+      ? await dataUrlToBlobUrl(data.inlineArtifacts.reportPdfDataUrl)
+      : data.reportPdfUrl || '#';
+    reportPdfLink.href = pdfHref;
+    if (hasPdf) {
+      pendingPdfDownload = {
+        href: pdfHref,
+        fileName: data.inlineArtifacts?.pdfFileName || ''
+      };
+      reportPdfLink.removeAttribute('download');
+    } else {
+      reportPdfLink.removeAttribute('download');
+    }
+    reportPdfLink.title = isDemoPayload || !hasPdf ? 'Demo only — no PDF file is available.' : '';
+    reportPdfLink.toggleAttribute('aria-disabled', !hasPdf);
   }
   if (scanSummary) scanSummary.innerHTML = summaryMarkup(pickSummary(data));
   if (technologySummary) technologySummary.innerHTML = technologyMarkup(data.technologies);
@@ -464,7 +596,7 @@ async function runDemo(url) {
     window.clearInterval(progressTimer);
     setScanProgress(100);
     renderStatuses('done');
-    renderResults(data);
+    await renderResults(data);
   } catch (error) {
     document.body.classList.remove('is-scanning');
     window.clearInterval(timer);
@@ -502,7 +634,7 @@ async function runDataDemo() {
   try {
     const data = await loadMockScanData();
     renderStatuses('done');
-    renderResults(data);
+    await renderResults(data);
   } catch (err) {
     renderStatuses('error');
     errorBox.textContent = err instanceof Error ? err.message : 'Demo data failed';
@@ -528,6 +660,96 @@ form.addEventListener('submit', async (event) => {
 
 demoDataButton?.addEventListener('click', () => {
   void runDataDemo();
+});
+
+servicesMenu?.addEventListener('mouseenter', () => {
+  window.clearTimeout(servicesCloseTimer);
+  setServicesOpen(true);
+});
+
+servicesMenu?.addEventListener('mouseleave', scheduleServicesClose);
+
+servicesDropdown?.addEventListener('mouseenter', () => {
+  window.clearTimeout(servicesCloseTimer);
+  setServicesOpen(true);
+});
+
+servicesDropdown?.addEventListener('mouseleave', () => setServicesOpen(false));
+
+servicesButton?.addEventListener('click', () => {
+  const isOpen = servicesButton.getAttribute('aria-expanded') === 'true';
+  setServicesOpen(!isOpen, !isOpen);
+});
+
+servicesButton?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    const isOpen = servicesButton.getAttribute('aria-expanded') === 'true';
+    setServicesOpen(!isOpen, !isOpen);
+  } else if (event.key === 'Escape') {
+    setServicesOpen(false);
+    servicesButton.focus();
+  }
+});
+
+servicesDropdown?.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    setServicesOpen(false);
+    servicesButton?.focus();
+  }
+});
+
+mobileToggle?.addEventListener('click', () => {
+  const isOpen = mobileToggle.getAttribute('aria-expanded') === 'true';
+  setMobileMenuOpen(!isOpen);
+});
+
+mobileMenu?.querySelectorAll('a, button').forEach((item) => {
+  item.addEventListener('click', () => setMobileMenuOpen(false));
+});
+
+chatButtons.forEach((button) => {
+  button.addEventListener('click', openCircleBloxChat);
+});
+
+reportPdfLink?.addEventListener('click', (event) => {
+  if (!pendingPdfDownload) return;
+  event.preventDefault();
+  openPdfEmailModal();
+});
+
+pdfEmailModal?.querySelectorAll('[data-modal-close]').forEach((button) => {
+  button.addEventListener('click', closePdfEmailModal);
+});
+
+pdfEmailForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!pdfEmailInput) return;
+  const email = pdfEmailInput.value.trim();
+  if (!email) return;
+  const submitButtonEl = pdfEmailForm.querySelector('button[type="submit"]');
+  if (submitButtonEl) submitButtonEl.disabled = true;
+  try {
+    await submitPdfLead(email);
+    closePdfEmailModal();
+    triggerPdfDownload();
+  } catch (error) {
+    if (pdfEmailError) {
+      pdfEmailError.textContent = error instanceof Error ? error.message : 'Could not submit email.';
+      pdfEmailError.classList.remove('hidden');
+    }
+  } finally {
+    if (submitButtonEl) submitButtonEl.disabled = false;
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !pdfEmailModal?.classList.contains('hidden')) {
+    closePdfEmailModal();
+  }
+  if (event.key === 'Escape') {
+    setMobileMenuOpen(false);
+  }
 });
 
 sortButtons.forEach((button) => {

@@ -8,6 +8,77 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="cb-nav" role="navigation" aria-label="Main navigation">
+      <div class="cb-nav-container">
+        <div class="cb-nav-inner">
+          <div class="cb-logo-wrap">
+            <div class="flex items-center relative">
+              <a class="font-bold text-primary hover:text-primary/90 transition-colors mx-1" aria-label="CircleBlox - Home" href="/">
+                <span class="text-2xl md:text-3xl" aria-hidden="true">C</span><span class="text-lg md:text-2xl" aria-hidden="true">IRCLE</span><span class="text-2xl md:text-3xl" aria-hidden="true">B</span><span class="text-lg md:text-2xl" aria-hidden="true">LOX</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="cb-desktop-nav">
+            <div class="cb-services" data-services-menu>
+              <button
+                class="cb-nav-link cb-services-button"
+                type="button"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="cb-services-menu"
+                data-services-button
+              >
+                Services
+                <span class="cb-chevron" aria-hidden="true">⌄</span>
+              </button>
+              <div class="cb-services-menu" id="cb-services-menu" role="menu" aria-label="Services menu" hidden data-services-dropdown>
+                <a href="https://circleblox.com/ada-compliance" role="menuitem">ADA Compliance &amp; Accessibility</a>
+                <a href="https://circleblox.com/page-speed" role="menuitem">Page Speed &amp; Performance</a>
+                <a href="https://circleblox.com/ai-development" role="menuitem">AI-Powered Development</a>
+                <a href="https://circleblox.com/mvp-development" role="menuitem">MVP Development</a>
+                <a href="https://circleblox.com/fractional-team" role="menuitem">Fractional Development Team</a>
+                <a href="https://circleblox.com/legacy-modernization" role="menuitem">Legacy System Modernization</a>
+              </div>
+            </div>
+
+            <a class="cb-nav-link" href="https://circleblox.com/pricing">Pricing</a>
+            <a class="cb-nav-link" href="https://circleblox.com/blog">Blog</a>
+            <button class="cb-nav-link cb-contact-button" type="button" data-open-chat>Contact</button>
+          </div>
+
+          <button
+            class="cb-mobile-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="cb-mobile-menu"
+            aria-label="Open navigation menu"
+            data-mobile-toggle
+          >
+            <span class="cb-hamburger" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+        </div>
+
+        <div class="cb-mobile-menu" id="cb-mobile-menu" role="menu" aria-label="Mobile navigation menu" hidden data-mobile-menu>
+          <div class="cb-mobile-services">
+            <div class="cb-mobile-heading">Services</div>
+            <a href="https://circleblox.com/ada-compliance" role="menuitem">ADA Compliance &amp; Accessibility</a>
+            <a href="https://circleblox.com/page-speed" role="menuitem">Page Speed &amp; Performance</a>
+            <a href="https://circleblox.com/ai-development" role="menuitem">AI-Powered Development</a>
+            <a href="https://circleblox.com/mvp-development" role="menuitem">MVP Development</a>
+            <a href="https://circleblox.com/fractional-team" role="menuitem">Fractional Development Team</a>
+            <a href="https://circleblox.com/legacy-modernization" role="menuitem">Legacy System Modernization</a>
+          </div>
+          <a href="https://circleblox.com/pricing" role="menuitem">Pricing</a>
+          <a href="https://circleblox.com/blog" role="menuitem">Blog</a>
+          <button class="cb-mobile-chat" type="button" role="menuitem" data-open-chat>Contact</button>
+        </div>
+      </div>
+    </nav>
     <main id="main" class="shell">
       <section class="hero masthead" aria-labelledby="masthead-title">
         <div class="masthead-icon" aria-hidden="true">
@@ -203,6 +274,22 @@
           </p>
         </div>
       </section>
+
+      <div class="modal hidden" id="pdf-email-modal" role="dialog" aria-modal="true" aria-labelledby="pdf-email-title">
+        <div class="modal-backdrop" data-modal-close></div>
+        <div class="modal-card">
+          <button class="modal-close" type="button" data-modal-close aria-label="Close email form">×</button>
+          <p class="eyebrow">Download report</p>
+          <h2 id="pdf-email-title">Get your free ADA Compliance results</h2>
+          <p id="pdf-email-copy" class="modal-copy">Please enter your email to get your free ADA Compliance results.</p>
+          <form id="pdf-email-form" class="modal-form">
+            <label for="pdf-email">Email address</label>
+            <input id="pdf-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            <p class="modal-error hidden" id="pdf-email-error" role="alert"></p>
+            <button type="submit">Download PDF</button>
+          </form>
+        </div>
+      </div>
     </main>
 
     <script type="module" src="/app.js"></script>

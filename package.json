@@ -3,17 +3,22 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "node server.js",
     "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
-    "@axe-core/playwright": "^4.8.3",
+    "@axe-core/playwright": "^4.11.3",
+    "@sparticuz/chromium": "^147.0.0",
     "adm-zip": "^0.5.17",
-    "axe-core": "^4.9.1",
+    "axe-core": "^4.12.0",
     "cheerio": "^1.0.0-rc.12",
     "express": "^4.19.2",
+    "follow-redirects": "^1.16.0",
     "multer": "^2.1.1",
-    "playwright": "^1.41.2"
+    "playwright": "^1.60.0"
   }
 }

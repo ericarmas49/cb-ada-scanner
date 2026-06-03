@@ -2,13 +2,15 @@
 
 const fs = require('fs');
 const { pathToFileURL } = require('url');
-const { chromium } = require('playwright');
+const { launchBrowser } = require('../scan/browser');
 const { buildReportHtml } = require('./build_report_html');
 
 async function writePdfFromHtml(htmlPath, pdfPath) {
-  const browser = await chromium.launch({ headless: true });
+  const { browser, page } = await launchBrowser({
+    headed: false,
+    viewport: { width: 1280, height: 900 }
+  });
   try {
-    const page = await browser.newPage();
     await page.goto(pathToFileURL(htmlPath).toString(), { waitUntil: 'networkidle' });
     await page.pdf({
       path: pdfPath,
