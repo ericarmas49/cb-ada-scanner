@@ -30,7 +30,6 @@ Set these environment variables on the backend:
 - `ALLOWED_ORIGINS`: comma-separated frontend origins allowed to call the API, for example `https://your-vercel-app.vercel.app,https://your-domain.com`.
 - `PUBLIC_BACKEND_ORIGIN`: public backend URL used when generating report links, for example `https://api.your-domain.com`.
 - `DATA_ROOT`: optional writable storage path for generated reports and uploads. Defaults to the repo directory outside Vercel.
-- `LOW_MEMORY_MODE`: optional `true`/`false`. Render automatically uses a lower-memory scan profile that skips PDF generation and full-page screenshots.
 
 After deploy, verify `https://api.your-domain.com/health` returns `{ "ok": true }`.
 
@@ -56,7 +55,6 @@ Vercel runs `npm run build`, which writes `public/config.js` so browser requests
 - `ALLOWED_ORIGINS`
 - `PUBLIC_BACKEND_ORIGIN`
 - `DATA_ROOT`
-- `LOW_MEMORY_MODE`
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL`
 
