@@ -20,7 +20,7 @@ The app is set up so Vercel serves the static frontend and a separate Node host 
 Deploy this repo to Render, Railway, Fly.io, or another Node host with:
 
 ```bash
-npm install
+node --run render-build
 npm start
 ```
 
@@ -32,6 +32,11 @@ Set these environment variables on the backend:
 - `DATA_ROOT`: optional writable storage path for generated reports and uploads. Defaults to the repo directory outside Vercel.
 
 After deploy, verify `https://api.your-domain.com/health` returns `{ "ok": true }`.
+
+For Render, use:
+
+- Build command: `node --run render-build`
+- Start command: `npm start`
 
 ### Vercel frontend
 

@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "node scripts/writeFrontendConfig.js",
+    "render-build": "npm install && npx playwright install chromium",
     "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
