@@ -1,41 +1,15 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "rewrites": [
     {
-      "src": "server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "tools/a11y-scanner/**",
-          "node_modules/@axe-core/playwright/**",
-          "node_modules/axe-core/**",
-          "node_modules/@sparticuz/chromium/**",
-          "node_modules/follow-redirects/**",
-          "node_modules/tar-fs/**",
-          "node_modules/tar-stream/**",
-          "node_modules/bare-fs/**",
-          "node_modules/bare-events/**",
-          "node_modules/bare-stream/**",
-          "node_modules/events-universal/**",
-          "node_modules/fast-fifo/**",
-          "node_modules/pump/**",
-          "node_modules/end-of-stream/**",
-          "node_modules/once/**",
-          "node_modules/wrappy/**",
-          "node_modules/streamx/**",
-          "node_modules/text-decoder/**",
-          "node_modules/teex/**",
-          "node_modules/b4a/**",
-          "node_modules/playwright/**",
-          "node_modules/playwright-core/**"
-        ]
-      }
-    }
-  ],
-  "routes": [
+      "source": "/wp-theme-scanner",
+      "destination": "/wp-theme-scanner.html"
+    },
     {
-      "src": "/(.*)",
-      "dest": "server.js"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

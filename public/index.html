@@ -236,7 +236,6 @@
               <legend>Level</legend>
               <label><input type="checkbox" value="A" data-filter-group="level" checked /> A</label>
               <label><input type="checkbox" value="AA" data-filter-group="level" checked /> AA</label>
-              <label><input type="checkbox" value="AAA" data-filter-group="level" checked /> AAA</label>
             </fieldset>
             <fieldset>
               <legend>Severity</legend>
@@ -261,6 +260,32 @@
                 </tr>
               </thead>
               <tbody id="issues-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel results-panel aaa-results-panel post-scan-content">
+          <div class="aaa-results-heading">
+            <div>
+              <p class="eyebrow">Advisory AAA Review</p>
+              <h2>AAA Issues</h2>
+            </div>
+            <p id="aaa-issues-summary" class="filter-summary" aria-live="polite"></p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Criterion</th>
+                  <th>Level</th>
+                  <th>Severity</th>
+                  <th>Title</th>
+                  <th>WCAG Ref</th>
+                  <th>Selector</th>
+                </tr>
+              </thead>
+              <tbody id="aaa-issues-body"></tbody>
             </table>
           </div>
         </div>
@@ -292,6 +317,7 @@
       </div>
     </main>
 
+    <script src="/config.js"></script>
     <script type="module" src="/app.js"></script>
   </body>
   </html>

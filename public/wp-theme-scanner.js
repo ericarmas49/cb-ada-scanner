@@ -19,6 +19,13 @@ const reviewCountsBox = document.querySelector('#theme-review-counts');
 const learningQueueBox = document.querySelector('#theme-learning-queue');
 const issuesBody = document.querySelector('#theme-issues-body');
 
+const frontendConfig = window.ACCESSIBILITY_DEMO_CONFIG || {};
+const API_BASE_URL = String(frontendConfig.apiBaseUrl || '').replace(/\/+$/, '');
+
+function apiUrl(path) {
+  return `${API_BASE_URL}${path}`;
+}
+
 function escapeHtml(value) {
   return String(value || '')
     .replace(/&/g, '&amp;')
@@ -300,7 +307,7 @@ form.addEventListener('submit', async (event) => {
   try {
     const body = new FormData();
     body.append('themeZip', file);
-    const response = await fetch('/api/wp-theme-scan', {
+    const response = await fetch(apiUrl('/api/wp-theme-scan'), {
       method: 'POST',
       body
     });

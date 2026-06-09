@@ -9,7 +9,7 @@ import { runWpThemeScan } from './lib/runWpThemeScan.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const dataRoot = process.env.VERCEL ? path.join('/tmp', 'accessibility-demo-app') : __dirname;
+const dataRoot = process.env.DATA_ROOT || (process.env.VERCEL ? path.join('/tmp', 'accessibility-demo-app') : __dirname);
 const runsRoot = path.join(dataRoot, 'runs');
 const uploadRoot = path.join(runsRoot, '_uploads');
 fs.mkdirSync(uploadRoot, { recursive: true });
@@ -19,6 +19,48 @@ const upload = multer({
     fileSize: 30 * 1024 * 1024,
     files: 1
   }
+});
+
+app.set('trust proxy', 1);
+
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
+function normalizeOrigin(origin) {
+  return String(origin || '').trim().replace(/\/+$/, '');
+}
+
+function isAllowedOrigin(origin) {
+  if (!origin || allowedOrigins.length === 0) return true;
+  const normalizedOrigin = normalizeOrigin(origin);
+  return allowedOrigins.includes(normalizedOrigin);
+}
+
+function requestOrigin(req) {
+  const configuredOrigin = normalizeOrigin(process.env.PUBLIC_BACKEND_ORIGIN);
+  if (configuredOrigin) return configuredOrigin;
+  return `${req.protocol}://${req.get('host')}`;
+}
+
+app.use((req, res, next) => {
+  const origin = req.get('origin');
+  if (isAllowedOrigin(origin)) {
+    if (origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(isAllowedOrigin(origin) ? 204 : 403);
+    return;
+  }
+
+  next();
 });
 
 app.use(express.json({ limit: '2mb' }));
@@ -50,7 +92,7 @@ app.post('/api/demo', async (req, res) => {
       return;
     }
 
-    const origin = `${req.protocol}://${req.get('host')}`;
+    const origin = requestOrigin(req);
     const result = runAccessibilityDemo({
       appRoot: __dirname,
       outputRoot: dataRoot,
@@ -102,7 +144,7 @@ app.post('/api/wp-theme-scan', upload.single('themeZip'), async (req, res) => {
       return;
     }
 
-    const origin = `${req.protocol}://${req.get('host')}`;
+    const origin = requestOrigin(req);
     const result = await runWpThemeScan({
       appRoot: dataRoot,
       zipPath: req.file.path,

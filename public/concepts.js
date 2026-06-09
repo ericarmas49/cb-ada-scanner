@@ -11,6 +11,13 @@ const jsonReport = document.querySelector('[data-json-report]');
 const issueList = document.querySelector('[data-issue-list]');
 const sampleButton = document.querySelector('[data-sample-button]');
 
+const frontendConfig = window.ACCESSIBILITY_DEMO_CONFIG || {};
+const API_BASE_URL = String(frontendConfig.apiBaseUrl || '').replace(/\/+$/, '');
+
+function apiUrl(path) {
+  return `${API_BASE_URL}${path}`;
+}
+
 function normalizeUrl(value) {
   const trimmed = value.trim();
   if (!trimmed) return '';
@@ -69,7 +76,7 @@ function renderResults(data) {
 async function runScan(url) {
   setStatus('Scanning page. This may take a moment.');
   resultPanel?.classList.remove('is-visible');
-  const response = await fetch('/api/demo', {
+  const response = await fetch(apiUrl('/api/demo'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url })

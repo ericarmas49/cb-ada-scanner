@@ -33,7 +33,9 @@ const scanProgressValue = document.querySelector('#scan-progress-value');
 const scanProgressBar = document.querySelector('#scan-progress-bar');
 const scanProgressCopy = document.querySelector('#scan-progress-copy');
 const issuesBody = document.querySelector('#issues-body');
+const aaaIssuesBody = document.querySelector('#aaa-issues-body');
 const issuesFilterSummary = document.querySelector('#issues-filter-summary');
+const aaaIssuesSummary = document.querySelector('#aaa-issues-summary');
 const sortButtons = Array.from(document.querySelectorAll('[data-sort-key]'));
 const filterInputs = Array.from(document.querySelectorAll('[data-filter-group]'));
 const demoStrip = document.querySelector('#demo-strip');
@@ -55,6 +57,13 @@ let activeArtifactUrls = [];
 let currentScanData = null;
 let pendingPdfDownload = null;
 let servicesCloseTimer = null;
+
+const frontendConfig = window.ACCESSIBILITY_DEMO_CONFIG || {};
+const API_BASE_URL = String(frontendConfig.apiBaseUrl || '').replace(/\/+$/, '');
+
+function apiUrl(path) {
+  return `${API_BASE_URL}${path}`;
+}
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -158,15 +167,46 @@ function gradeAndRiskFromScore(score) {
   return { grade: 'F', complianceRisk: 'severe' };
 }
 
+function scoreFromIssues(issues) {
+  const totals = { critical: 0, high: 0, moderate: 0, low: 0 };
+  issues.forEach((issue) => {
+    const severity = String(issue.severity || '').toLowerCase();
+    if (totals[severity] !== undefined) totals[severity] += 1;
+  });
+
+  const deduction =
+    Math.min(totals.critical * 5, 40) +
+    Math.min(totals.high * 3, 30) +
+    Math.min(totals.moderate * 1.5, 12) +
+    Math.min(totals.low * 0.5, 5);
+  let score = Math.max(0, Math.min(100, 100 - deduction));
+  if (totals.critical > 0) score = Math.min(score, 89);
+  return Math.round(score);
+}
+
 /** Server sends dashboard; derive a minimal one for older saved payloads. */
 function pickDashboard(data) {
   const d = data?.dashboard;
+  const issues = data.issues || [];
+  const scoredIssues = issues.filter((issue) => !isAaaIssue(issue));
+  if (scoredIssues.length > 0 || issues.length > 0) {
+    const violationCount = scoredIssues.length;
+    const criticalCount = scoredIssues.filter((issue) => String(issue.severity || '').toLowerCase() === 'critical').length;
+    const accessibilityScore = scoreFromIssues(scoredIssues);
+    const { grade, complianceRisk } = gradeAndRiskFromScore(accessibilityScore);
+    return {
+      violationCount,
+      criticalCount,
+      accessibilityScore,
+      grade,
+      complianceRisk
+    };
+  }
   if (d && typeof d.violationCount === 'number' && typeof d.accessibilityScore === 'number') {
     return d;
   }
-  const issues = data.issues || [];
   const s = pickSummary(data);
-  const violationCount = issues.length;
+  const violationCount = d?.violationCount || 0;
   const criticalCount = s.critical;
   const accessibilityScore = violationCount === 0 ? 100 : 0;
   const { grade, complianceRisk } = gradeAndRiskFromScore(accessibilityScore);
@@ -200,7 +240,7 @@ function renderDashboard(data) {
   }
 
   const d = pickDashboard(data);
-  const findingCount = (data.issues || []).length;
+  const findingCount = d.violationCount || 0;
   dashViolationCount.textContent = `${findingCount} violation${findingCount === 1 ? '' : 's'}`;
 
   if (findingCount === 0) {
@@ -333,7 +373,7 @@ function triggerPdfDownload() {
 }
 
 async function submitPdfLead(email) {
-  const response = await fetch('/api/pdf-lead', {
+  const response = await fetch(apiUrl('/api/pdf-lead'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -425,6 +465,10 @@ function issueMatchesFilters(issue) {
   return true;
 }
 
+function isAaaIssue(issue) {
+  return String(displayComplianceLevel(issue)).toUpperCase() === 'AAA';
+}
+
 function sortValueForIssue(issue, key) {
   if (key === 'id') return friendlyIssueId(issue.id);
   if (key === 'criterion') return `${displayCriterionId(issue)} ${issue.criterionTitle || ''}`.trim();
@@ -462,9 +506,15 @@ function compareIssues(left, right) {
 }
 
 function visibleIssues() {
-  const filtered = currentIssues.filter(issueMatchesFilters);
+  const filtered = currentIssues.filter((issue) => !isAaaIssue(issue) && issueMatchesFilters(issue));
   if (!issueSort.key) return filtered;
   return [...filtered].sort(compareIssues);
+}
+
+function sortedAaaIssues() {
+  const aaaIssues = currentIssues.filter(isAaaIssue);
+  if (!issueSort.key) return aaaIssues;
+  return [...aaaIssues].sort(compareIssues);
 }
 
 function updateSortControls() {
@@ -488,15 +538,7 @@ function renderIssuesTable() {
   issuesBody.innerHTML = '';
   rows.forEach((issue) => {
     const row = document.createElement('tr');
-    row.innerHTML = `
-      <td title="${escapeHtml(issue.id || '')}">${escapeHtml(friendlyIssueId(issue.id))}</td>
-      <td>${escapeHtml(displayCriterionId(issue))}</td>
-      <td>${escapeHtml(displayComplianceLevel(issue))}</td>
-      <td>${escapeHtml(issue.severity)}</td>
-      <td>${escapeHtml(issue.title)}</td>
-      <td>${wcagRefCell(issue)}</td>
-      <td>${escapeHtml(issue.selector || '-')}</td>
-    `;
+    row.innerHTML = issueRowHtml(issue);
     issuesBody.appendChild(row);
   });
 
@@ -507,11 +549,47 @@ function renderIssuesTable() {
   }
 
   if (issuesFilterSummary) {
-    issuesFilterSummary.textContent = `Showing ${rows.length} of ${currentIssues.length} violation${
-      currentIssues.length === 1 ? '' : 's'
+    const mainIssueCount = currentIssues.filter((issue) => !isAaaIssue(issue)).length;
+    issuesFilterSummary.textContent = `Showing ${rows.length} of ${mainIssueCount} A/AA violation${
+      mainIssueCount === 1 ? '' : 's'
     }`;
   }
+  renderAaaIssuesTable();
   updateSortControls();
+}
+
+function issueRowHtml(issue) {
+  return `
+    <td title="${escapeHtml(issue.id || '')}">${escapeHtml(friendlyIssueId(issue.id))}</td>
+    <td>${escapeHtml(displayCriterionId(issue))}</td>
+    <td>${escapeHtml(displayComplianceLevel(issue))}</td>
+    <td>${escapeHtml(issue.severity)}</td>
+    <td>${escapeHtml(issue.title)}</td>
+    <td>${wcagRefCell(issue)}</td>
+    <td>${escapeHtml(issue.selector || '-')}</td>
+  `;
+}
+
+function renderAaaIssuesTable() {
+  if (!aaaIssuesBody) return;
+
+  const rows = sortedAaaIssues();
+  aaaIssuesBody.innerHTML = '';
+  rows.forEach((issue) => {
+    const row = document.createElement('tr');
+    row.innerHTML = issueRowHtml(issue);
+    aaaIssuesBody.appendChild(row);
+  });
+
+  if (rows.length === 0) {
+    const row = document.createElement('tr');
+    row.innerHTML = '<td colspan="7">No AAA issues found.</td>';
+    aaaIssuesBody.appendChild(row);
+  }
+
+  if (aaaIssuesSummary) {
+    aaaIssuesSummary.textContent = `${rows.length} AAA issue${rows.length === 1 ? '' : 's'} - not included in WCAG 2.2 score`;
+  }
 }
 
 async function renderResults(data) {
@@ -583,7 +661,7 @@ async function runDemo(url) {
   }, 900);
 
   try {
-    const response = await fetch('/api/demo', {
+    const response = await fetch(apiUrl('/api/demo'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url })
