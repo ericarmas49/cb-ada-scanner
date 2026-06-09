@@ -98,7 +98,11 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
   } catch (err) {
     partialFailures.push('viewport-screenshot');
   }
-  await page.screenshot({ path: screenshotPath, fullPage: true });
+  let fullPageScreenshot = null;
+  if (options.fullPageScreenshot) {
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+    fullPageScreenshot = toRel(screenshotPath);
+  }
   const html = await page.content();
   fs.writeFileSync(htmlPath, html, 'utf8');
   fs.writeFileSync(consolePath, consoleEntries.map((e) => JSON.stringify(e)).join('\n'), 'utf8');
@@ -159,7 +163,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
       status,
       title,
       artifacts: {
-        screenshot: toRel(screenshotPath),
+        screenshot: fullPageScreenshot || viewportScreenshot,
         viewportScreenshot,
         html: toRel(htmlPath),
         consoleLog: toRel(consolePath),

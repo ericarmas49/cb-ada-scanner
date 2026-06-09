@@ -41,6 +41,11 @@ function parseViewport(viewportStr) {
   return { width, height };
 }
 
+function parseBoolean(value, defaultValue) {
+  if (value === undefined) return defaultValue;
+  return String(value).toLowerCase() !== 'false';
+}
+
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
@@ -126,7 +131,9 @@ async function main() {
     timeoutMs: Number(args.timeoutMs || 30000),
     headed: Boolean(args.headed || false),
     outputDir: args.output || path.join('output', timestampFolder()),
-    formTest: args.formTest !== undefined ? String(args.formTest).toLowerCase() !== 'false' : true,
+    formTest: parseBoolean(args.formTest, true),
+    fullPageScreenshot: parseBoolean(args.fullPageScreenshot, true),
+    pdf: parseBoolean(args.pdf, true),
     keyboardTabSteps: Number(args.keyboardTabSteps || 25),
     settleMs: Number(args.settleMs || 2500),
     viewport: parseViewport(args.viewport || '1280x720'),
@@ -186,7 +193,7 @@ async function main() {
   const reportPaths = {
     jsonPath: path.join(options.outputDir, 'report.json'),
     htmlPath: path.join(options.outputDir, 'report.html'),
-    pdfPath: path.join(options.outputDir, 'report.pdf')
+    pdfPath: options.pdf ? path.join(options.outputDir, 'report.pdf') : null
   };
 
   const writeResult = await writeReportFiles(report, reportPaths, options.outputDir);
