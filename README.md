@@ -20,7 +20,7 @@ The app is set up so Vercel serves the static frontend and a separate Node host 
 Deploy this repo to Render, Railway, Fly.io, or another Node host with:
 
 ```bash
-node --run render-build
+npm run render-build
 npm start
 ```
 
@@ -35,7 +35,7 @@ After deploy, verify `https://api.your-domain.com/health` returns `{ "ok": true 
 
 For Render, use:
 
-- Build command: `node --run render-build`
+- Build command: `npm run render-build`
 - Start command: `npm start`
 
 ### Vercel frontend

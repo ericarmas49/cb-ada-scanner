@@ -135,7 +135,15 @@ body {
 }
 
 .cb-nav-link:hover {
+  background: transparent;
   color: #fff;
+}
+
+.cb-nav button:hover:not(:disabled),
+.cb-nav button:focus-visible,
+.cb-nav a:hover,
+.cb-nav a:focus-visible {
+  background: transparent;
 }
 
 .cb-services {
