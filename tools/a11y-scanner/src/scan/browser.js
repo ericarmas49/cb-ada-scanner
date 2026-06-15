@@ -24,9 +24,11 @@ async function launchBrowser(options) {
   }
 
   const browser = await chromium.launch(launchOptions);
+  const defaultUserAgent =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
   const context = await browser.newContext({
     viewport: options.viewport,
-    userAgent: options.userAgent || undefined
+    userAgent: options.userAgent || (isServerHost || isVercel ? defaultUserAgent : undefined)
   });
   const page = await context.newPage();
   return { browser, context, page };

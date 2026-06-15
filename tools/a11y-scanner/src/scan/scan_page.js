@@ -77,6 +77,40 @@ function injectBaseHref(html, baseHref) {
   return `${baseTag}\n${html}`;
 }
 
+async function configureRemoteScanPage(page, timeoutMs) {
+  page.setDefaultNavigationTimeout(timeoutMs);
+  page.setDefaultTimeout(timeoutMs);
+
+  await page.route('**/*', (route) => {
+    const type = route.request().resourceType();
+    if (type === 'media' || type === 'font') {
+      route.abort();
+      return;
+    }
+    route.contue();
+  });
+}
+
+async function navigateForScan(page, url, timeoutMs) {
+  let response;
+  try {
+    response = await page.goto(url, { waitUntil: 'commit', timeout: timeoutMs });
+  } catch (err) {
+    throw err;
+  }
+
+  try {
+    await page.waitForLoadState('domcontentloaded', { timeout: Math.min(45000, timeoutMs) });
+  } catch (_) {
+    const hasContent = await page.evaluate(() => Boolean(document.body && document.body.innerText.trim().length > 0));
+    if (!hasContent) {
+      throw new Error(`Page did not render content within ${timeoutMs}ms`);
+    }
+  }
+
+  return response;
+}
+
 async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
   const partialFailures = [];
   const { browser, page } = await launchBrowser(options);
@@ -104,7 +138,8 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
       const htmlWithBase = injectBaseHref(html, baseHref);
       await page.setContent(htmlWithBase, { waitUntil: 'domcontentloaded' });
     } else {
-      response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: options.timeoutMs });
+      await configureRemoteScanPage(page, options.timeoutMs);
+      response = await navigateForScan(page, url, options.timeoutMs);
     }
   } catch (err) {
     await browser.close();

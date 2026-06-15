@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runAccessibilityDemo } from './lib/runDemo.js';
 import { runWpThemeScan } from './lib/runWpThemeScan.js';
+import { savePdfLead } from './lib/savePdfLead.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -112,7 +113,7 @@ app.post('/api/demo', async (req, res) => {
   }
 });
 
-app.post('/api/pdf-lead', (req, res) => {
+app.post('/api/pdf-lead', async (req, res) => {
   const { email, siteName, runId, reportUrl } = req.body || {};
   const normalizedEmail = String(email || '').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
@@ -120,17 +121,18 @@ app.post('/api/pdf-lead', (req, res) => {
     return;
   }
 
-  const lead = {
-    email: normalizedEmail,
-    siteName: String(siteName || ''),
-    runId: String(runId || ''),
-    reportUrl: String(reportUrl || ''),
-    submittedAt: new Date().toISOString()
-  };
-
-  // TODO: Wire this to the production email provider once recipients/API credentials are configured.
-  console.info('PDF lead submitted:', lead);
-  res.json({ ok: true });
+  try {
+    await savePdfLead({
+      email: normalizedEmail,
+      siteName: String(siteName || ''),
+      runId: String(runId || ''),
+      reportUrl: String(reportUrl || '')
+    });
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('PDF lead save failed:', error);
+    res.status(500).json({ error: 'Could not save your email. Please try again.' });
+  }
 });
 
 app.post('/api/wp-theme-scan', upload.single('themeZip'), async (req, res) => {

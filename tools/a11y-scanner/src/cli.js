@@ -128,7 +128,7 @@ async function main() {
   const options = {
     url: normalizedUrl,
     htmlFile: htmlFileArg ? path.resolve(htmlFileArg) : null,
-    timeoutMs: Number(args.timeoutMs || 60000),
+    timeoutMs: Number(args.timeoutMs || 120000),
     headed: Boolean(args.headed || false),
     outputDir: args.output || path.join('output', timestampFolder()),
     formTest: parseBoolean(args.formTest, true),
