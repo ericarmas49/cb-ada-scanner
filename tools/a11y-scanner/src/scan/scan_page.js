@@ -10,7 +10,37 @@ const { runDraggingCheck } = require('./wcag22_dragging');
 const { runFormTest } = require('./form_test');
 const { runSupplementalRuntimeChecks } = require('./supplemental_runtime_checks');
 
-async function settlePageForScan(page) {
+async function scrollToTop(page) {
+  await page.evaluate(async () => {
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const scrollRoots = [window, document.documentElement, document.body];
+    for (const root of scrollRoots) {
+      if (!root) continue;
+      try {
+        if (typeof root.scrollTo === 'function') {
+          root.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }
+      } catch (_) {
+        try {
+          root.scrollTo(0, 0);
+        } catch (_) {
+          /* ignore */
+        }
+      }
+    }
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (y <= 1) break;
+      await sleep(50);
+    }
+    await sleep(150);
+  });
+}
+
+async function lazyLoadPageContent(page) {
   try {
     await page.waitForLoadState('networkidle', { timeout: 8000 });
   } catch (_) {
@@ -27,12 +57,15 @@ async function settlePageForScan(page) {
         window.scrollTo(0, y);
         await sleep(100);
       }
-      window.scrollTo(0, 0);
-      await sleep(200);
     });
   } catch (_) {
     // ignore — e.g. cross-origin frames
   }
+  await scrollToTop(page);
+}
+
+async function settlePageForScan(page) {
+  await lazyLoadPageContent(page);
 }
 
 function injectBaseHref(html, baseHref) {
@@ -79,7 +112,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
   }
 
   await page.waitForTimeout(options.settleMs);
-  await settlePageForScan(page);
+  await scrollToTop(page);
 
   const finalUrl = htmlFile ? `file://${htmlFile}` : page.url();
   const title = await page.title();
@@ -98,6 +131,9 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
   } catch (err) {
     partialFailures.push('viewport-screenshot');
   }
+
+  await settlePageForScan(page);
+
   let fullPageScreenshot = null;
   if (options.fullPageScreenshot) {
     await page.screenshot({ path: screenshotPath, fullPage: true });

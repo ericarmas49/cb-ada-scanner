@@ -115,6 +115,18 @@ body {
   text-decoration: none;
 }
 
+.cb-logo-cap {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.cb-logo-body {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .cb-desktop-nav {
   display: none;
   align-items: center;
@@ -128,7 +140,9 @@ body {
   border: 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.8);
-  font: inherit;
+  font-family: Poppins, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
   text-decoration: none;
   cursor: pointer;
   transition: color 180ms ease;
@@ -156,9 +170,10 @@ body {
 }
 
 .cb-chevron {
+  position: relative;
+  top: -5px;
   font-size: 1.05rem;
   line-height: 1;
-  transform: translateY(-1px);
 }
 
 .cb-services-menu {
@@ -335,8 +350,8 @@ a:hover {
 a:focus-visible,
 button:focus-visible,
 input:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
+
+  outline-offset: 0px;
 }
 
 .skip-link {
@@ -434,7 +449,7 @@ input:focus-visible {
   overflow: visible;
   max-width: 980px;
   width: 100%;
-  margin: clamp(2rem, calc((100vh - 460px) / 2), 16rem) auto 0;
+  margin: 0 auto;
   padding: 1rem 0 2.25rem;
   border: 0;
   border-radius: 0;
@@ -753,10 +768,8 @@ input {
   min-height: 2.95rem;
   border-color: #b9b9b9;
   border-radius: 0.75rem;
-  background:
-    linear-gradient(90deg, rgba(60, 131, 246, 0.08), rgba(60, 131, 246, 0.08)) 0.9rem center / 0.85rem 0.85rem no-repeat,
-    #fff;
-  padding-left: 2.35rem;
+  background: #fff;
+  padding-left: 1.35rem;
   font-size: 0.9rem;
 }
 
@@ -1160,6 +1173,7 @@ body.scan-active .status-panel {
 
 .status-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: center;
 }
 
 .status-card {
@@ -1192,13 +1206,21 @@ body.scan-active .status-panel {
   background: rgba(254, 226, 226, 0.75);
 }
 
-.error-box {
-  margin-top: 1rem;
-  padding: 1rem;
-  border: 1px solid rgba(180, 35, 24, 0.42);
-  border-radius: 1.15rem;
-  background: rgba(254, 226, 226, 0.82);
-  color: var(--danger);
+.scan-failed-panel {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.scan-failed-panel h2 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+}
+
+.scan-failed-copy {
+  max-width: 36rem;
+  margin: 0 auto;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .palette-grid {
@@ -1369,7 +1391,7 @@ body.scan-active .status-panel {
 .scan-progress-value {
   margin: 0 0 1rem;
   color: var(--accent-dark);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Inter, "Avenir Next", "Segoe UI", Arial, sans-serif;
   font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 500;
   letter-spacing: -0.06em;
@@ -1426,7 +1448,7 @@ body.scan-active .status-panel {
 .dashboard-stat {
   margin: 0 0 0.75rem;
   color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Inter, "Avenir Next", "Segoe UI", Arial, sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.35rem);
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -1641,6 +1663,10 @@ body.scan-active .status-panel {
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: #fff;
+}
+
+.table-wrap td {
+  text-align: center;
 }
 
 table {

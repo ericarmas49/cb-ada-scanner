@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Accessibility scan report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -13,8 +16,8 @@
         <div class="cb-nav-inner">
           <div class="cb-logo-wrap">
             <div class="flex items-center relative">
-              <a class="font-bold text-primary hover:text-primary/90 transition-colors mx-1" aria-label="CircleBlox - Home" href="https://www.circleblox.com/">
-                <span class="text-2xl md:text-3xl" aria-hidden="true">C</span><span class="text-lg md:text-2xl" aria-hidden="true">IRCLE</span><span class="text-2xl md:text-3xl" aria-hidden="true">B</span><span class="text-lg md:text-2xl" aria-hidden="true">LOX</span>
+              <a class="text-primary hover:text-primary/90 transition-colors mx-1" aria-label="CircleBlox - Home" href="https://www.circleblox.com/">
+                <span class="cb-logo-cap" aria-hidden="true">C</span><span class="cb-logo-body" aria-hidden="true">IRCLE</span><span class="cb-logo-cap" aria-hidden="true">B</span><span class="cb-logo-body" aria-hidden="true">LOX</span>
               </a>
             </div>
           </div>
@@ -145,7 +148,13 @@
       <section class="panel status-panel" id="status-panel" aria-hidden="true">
         <div class="status-grid" id="status-grid"></div>
       </section>
-      <div id="error-box" class="error-box hidden"></div>
+      <section id="scan-failed-panel" class="panel scan-failed-panel hidden" role="alert" aria-live="polite" aria-labelledby="scan-failed-title">
+        <p class="eyebrow">Scan status</p>
+        <h2 id="scan-failed-title">Scan failed</h2>
+        <p id="scan-failed-copy" class="scan-failed-copy">
+          We couldn&rsquo;t complete this scan. Check the URL and try again.
+        </p>
+      </section>
 
       <section id="results" class="results hidden">
         <div class="dashboard-grid" id="results-dashboard" aria-label="Scan overview">

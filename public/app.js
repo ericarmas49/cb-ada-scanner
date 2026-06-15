@@ -10,7 +10,8 @@ const submitButton = document.querySelector('#submit-button');
 const demoDataButton = document.querySelector('#demo-data-button');
 const statusGrid = document.querySelector('#status-grid');
 const statusPanel = document.querySelector('#status-panel');
-const errorBox = document.querySelector('#error-box');
+const scanFailedPanel = document.querySelector('#scan-failed-panel');
+const scanFailedCopy = document.querySelector('#scan-failed-copy');
 const results = document.querySelector('#results');
 const reportLink = document.querySelector('#report-link');
 const reportPdfLink = document.querySelector('#report-pdf-link');
@@ -100,6 +101,21 @@ function openCircleBloxChat() {
     return;
   }
   window.location.href = 'https://circleblox.com/';
+}
+
+const SCAN_FAILED_COPY =
+  'We couldn\u2019t complete this scan. Check the URL and try again.';
+
+function showScanFailed(error, copy = SCAN_FAILED_COPY) {
+  if (error) {
+    console.error('Scan failed:', error);
+  }
+  if (scanFailedCopy) scanFailedCopy.textContent = copy;
+  scanFailedPanel?.classList.remove('hidden');
+}
+
+function hideScanFailed() {
+  scanFailedPanel?.classList.add('hidden');
 }
 
 function renderStatuses(activeState) {
@@ -682,8 +698,7 @@ async function runDemo(url) {
     results.classList.add('hidden');
     results.classList.remove('scanning');
     renderStatuses('error');
-    errorBox.textContent = error instanceof Error ? error.message : 'Unknown error';
-    errorBox.classList.remove('hidden');
+    showScanFailed(error);
   } finally {
     submitButton.disabled = false;
     if (demoDataButton) demoDataButton.disabled = false;
@@ -704,7 +719,7 @@ async function loadMockScanData() {
 }
 
 async function runDataDemo() {
-  errorBox.classList.add('hidden');
+  hideScanFailed();
   results.classList.add('hidden');
   if (demoDataButton) demoDataButton.disabled = true;
   if (submitButton) submitButton.disabled = true;
@@ -715,8 +730,7 @@ async function runDataDemo() {
     await renderResults(data);
   } catch (err) {
     renderStatuses('error');
-    errorBox.textContent = err instanceof Error ? err.message : 'Demo data failed';
-    errorBox.classList.remove('hidden');
+    showScanFailed(err, 'Demo data could not be loaded. Try again in a moment.');
   } finally {
     if (demoDataButton) demoDataButton.disabled = false;
     if (submitButton) submitButton.disabled = false;
@@ -725,7 +739,7 @@ async function runDataDemo() {
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  errorBox.classList.add('hidden');
+  hideScanFailed();
   results.classList.add('hidden');
   const normalizedUrl = normalizeUrl(urlInput.value);
   if (!normalizedUrl) return;
