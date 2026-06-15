@@ -104,7 +104,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
       const htmlWithBase = injectBaseHref(html, baseHref);
       await page.setContent(htmlWithBase, { waitUntil: 'domcontentloaded' });
     } else {
-      response = await page.goto(url, { waitUntil: 'load', timeout: options.timeoutMs });
+      response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: options.timeoutMs });
     }
   } catch (err) {
     await browser.close();
