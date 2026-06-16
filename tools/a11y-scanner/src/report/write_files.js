@@ -11,7 +11,10 @@ async function writePdfFromHtml(htmlPath, pdfPath) {
     viewport: { width: 1280, height: 900 }
   });
   try {
-    await page.goto(pathToFileURL(htmlPath).toString(), { waitUntil: 'networkidle' });
+    await page.goto(pathToFileURL(htmlPath).toString(), {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000
+    });
     await page.pdf({
       path: pdfPath,
       format: 'Letter',

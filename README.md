@@ -31,6 +31,8 @@ Set these environment variables on the backend:
 - `PUBLIC_BACKEND_ORIGIN`: public backend URL used when generating report links, for example `https://api.your-domain.com`.
 - `DATA_ROOT`: optional writable storage path for generated reports and uploads. Defaults to the repo directory outside Vercel.
 - `SCAN_TIMEOUT_MS`: optional page navigation timeout in milliseconds (default `120000`).
+- `SCAN_SETTLE_MS`: optional post-load settle delay before snapshot (default `2000`).
+- `SCAN_KEYBOARD_STEPS`: optional keyboard tab steps during scan (default `10`).
 - `SUPABASE_URL`: Supabase project URL for storing PDF download leads.
 - `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key (backend only; never expose to the browser).
 
@@ -67,6 +69,8 @@ Vercel runs `npm run build`, which writes `public/config.js` so browser requests
 - `PUBLIC_BACKEND_ORIGIN`
 - `DATA_ROOT`
 - `SCAN_TIMEOUT_MS`
+- `SCAN_SETTLE_MS`
+- `SCAN_KEYBOARD_STEPS`
 - `SUPABASE_URL`: Supabase project URL for storing PDF download leads.
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `OPENAI_API_KEY`

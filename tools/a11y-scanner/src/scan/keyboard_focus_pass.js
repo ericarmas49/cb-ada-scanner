@@ -11,7 +11,7 @@ async function runKeyboardFocusPass(page, artifactsDir, outputDir, maxSteps) {
 
   for (let i = 0; i < maxSteps; i++) {
     await page.keyboard.press('Tab');
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(100);
 
     const focusInfo = await page.evaluate(() => {
       function buildSelector(el) {

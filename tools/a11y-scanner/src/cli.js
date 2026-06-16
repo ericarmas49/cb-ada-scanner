@@ -136,6 +136,9 @@ async function main() {
     pdf: parseBoolean(args.pdf, true),
     keyboardTabSteps: Number(args.keyboardTabSteps || 25),
     settleMs: Number(args.settleMs || 2500),
+    lazyLoadPasses: Number(args.lazyLoadPasses || 8),
+    lazyLoadDelayMs: Number(args.lazyLoadDelayMs || 75),
+    networkIdleTimeoutMs: Number(args.networkIdleTimeoutMs || 3000),
     viewport: parseViewport(args.viewport || '1280x720'),
     userAgent: args.userAgent || null
   };

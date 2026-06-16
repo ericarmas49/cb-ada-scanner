@@ -40,32 +40,42 @@ async function scrollToTop(page) {
   });
 }
 
-async function lazyLoadPageContent(page) {
+async function lazyLoadPageContent(page, options = {}) {
+  const maxPasses = Number(options.lazyLoadPasses || 8);
+  const scrollDelayMs = Number(options.lazyLoadDelayMs || 75);
+  const networkIdleTimeoutMs = Number(options.networkIdleTimeoutMs || 3000);
+
   try {
-    await page.waitForLoadState('networkidle', { timeout: 8000 });
+    await page.waitForLoadState('networkidle', { timeout: networkIdleTimeoutMs });
   } catch (_) {
     // ignore — many SPAs never go fully idle
   }
+  if (maxPasses <= 0) {
+    await scrollToTop(page);
+    return;
+  }
   try {
-    await page.evaluate(async () => {
-      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      const maxPasses = 24;
-      for (let pass = 0; pass < maxPasses; pass += 1) {
-        const { scrollHeight, clientHeight } = document.documentElement;
-        const y = window.scrollY + clientHeight * 0.92;
-        if (y >= scrollHeight - 4) break;
-        window.scrollTo(0, y);
-        await sleep(100);
-      }
-    });
+    await page.evaluate(
+      async ({ passes, delayMs }) => {
+        const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+        for (let pass = 0; pass < passes; pass += 1) {
+          const { scrollHeight, clientHeight } = document.documentElement;
+          const y = window.scrollY + clientHeight * 0.92;
+          if (y >= scrollHeight - 4) break;
+          window.scrollTo(0, y);
+          await sleep(delayMs);
+        }
+      },
+      { passes: maxPasses, delayMs: scrollDelayMs }
+    );
   } catch (_) {
     // ignore — e.g. cross-origin frames
   }
   await scrollToTop(page);
 }
 
-async function settlePageForScan(page) {
-  await lazyLoadPageContent(page);
+async function settlePageForScan(page, options = {}) {
+  await lazyLoadPageContent(page, options);
 }
 
 function injectBaseHref(html, baseHref) {
@@ -91,7 +101,7 @@ async function navigateForScan(page, url, timeoutMs) {
   }
 
   try {
-    await page.waitForLoadState('domcontentloaded', { timeout: Math.min(45000, timeoutMs) });
+    await page.waitForLoadState('domcontentloaded', { timeout: Math.min(20000, timeoutMs) });
   } catch (_) {
     const hasContent = await page.evaluate(() => Boolean(document.body && document.body.innerText.trim().length > 0));
     if (!hasContent) {
@@ -158,7 +168,7 @@ async function scanPage({ url, htmlFile, artifactsDir, outputDir, options }) {
     partialFailures.push('viewport-screenshot');
   }
 
-  await settlePageForScan(page);
+  await settlePageForScan(page, options);
 
   let fullPageScreenshot = null;
   if (options.fullPageScreenshot) {
