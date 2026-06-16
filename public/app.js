@@ -739,16 +739,47 @@ async function runDataDemo() {
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  hideScanFailed();
-  results.classList.add('hidden');
   const normalizedUrl = normalizeUrl(urlInput.value);
   if (!normalizedUrl) return;
+  await startScanFromUrl(normalizedUrl);
+});
+
+async function startScanFromUrl(normalizedUrl) {
+  hideScanFailed();
+  results.classList.add('hidden');
   submitButton.disabled = true;
   if (demoDataButton) demoDataButton.disabled = true;
   submitButton.textContent = 'Scanning…';
   await runDemo(normalizedUrl);
   if (demoDataButton) demoDataButton.disabled = false;
-});
+}
+
+function parseScanQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  const rawSite = (params.get('url') || params.get('site') || '').trim();
+  const autostartValue = String(params.get('scan') || params.get('autostart') || params.get('auto') || '')
+    .trim()
+    .toLowerCase();
+  const shouldAutostart = ['1', 'true', 'yes', 'scan'].includes(autostartValue);
+  return {
+    rawSite,
+    normalizedUrl: normalizeUrl(rawSite),
+    shouldAutostart
+  };
+}
+
+function applyScanQueryParams() {
+  if (!urlInput) return;
+  const { rawSite, normalizedUrl, shouldAutostart } = parseScanQueryParams();
+  if (!rawSite || !normalizedUrl) return;
+
+  urlInput.value = rawSite;
+  if (shouldAutostart) {
+    void startScanFromUrl(normalizedUrl);
+  }
+}
+
+applyScanQueryParams();
 
 demoDataButton?.addEventListener('click', () => {
   void runDataDemo();
