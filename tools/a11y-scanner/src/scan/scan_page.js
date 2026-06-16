@@ -80,15 +80,6 @@ function injectBaseHref(html, baseHref) {
 async function configureRemoteScanPage(page, timeoutMs) {
   page.setDefaultNavigationTimeout(timeoutMs);
   page.setDefaultTimeout(timeoutMs);
-
-  await page.route('**/*', (route) => {
-    const type = route.request().resourceType();
-    if (type === 'media' || type === 'font') {
-      route.abort();
-      return;
-    }
-    route.contue();
-  });
 }
 
 async function navigateForScan(page, url, timeoutMs) {
