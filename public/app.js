@@ -739,7 +739,7 @@ async function runDataDemo() {
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const normalizedUrl = normalizeUrl(urlInput.value);
+  const normalizedUrl = normalizeUrl(sanitizeSiteInput(urlInput.value));
   if (!normalizedUrl) return;
   await startScanFromUrl(normalizedUrl);
 });
@@ -756,7 +756,7 @@ async function startScanFromUrl(normalizedUrl, rawSite = urlInput?.value || norm
 }
 
 function updateScanUrlInBrowser(siteValue) {
-  const trimmed = String(siteValue || '').trim();
+  const trimmed = sanitizeSiteInput(siteValue);
   if (!trimmed) return;
 
   const params = new URLSearchParams(window.location.search);
@@ -770,17 +770,23 @@ function updateScanUrlInBrowser(siteValue) {
   window.history.replaceState({}, '', nextUrl);
 }
 
+function sanitizeSiteInput(value) {
+  return String(value || '')
+    .trim()
+    .replace(/[,;]+$/, '');
+}
+
 function parseScanQueryParams() {
   const params = new URLSearchParams(window.location.search);
-  const rawSite = (params.get('url') || params.get('site') || '').trim();
-  const autostartValue = String(params.get('scan') || params.get('autostart') || params.get('auto') || '')
+  const rawSite = sanitizeSiteInput(params.get('url') || params.get('site') || '');
+  const autostartValue = String(params.get('scan') ?? params.get('autostart') ?? params.get('auto') ?? '')
     .trim()
     .toLowerCase();
-  const shouldAutostart = ['1', 'true', 'yes', 'scan'].includes(autostartValue);
+  const disableAutostart = ['0', 'false', 'no', 'off'].includes(autostartValue);
   return {
     rawSite,
     normalizedUrl: normalizeUrl(rawSite),
-    shouldAutostart
+    shouldAutostart: Boolean(rawSite) && !disableAutostart
   };
 }
 
