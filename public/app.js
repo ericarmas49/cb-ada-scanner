@@ -744,7 +744,8 @@ form.addEventListener('submit', async (event) => {
   await startScanFromUrl(normalizedUrl);
 });
 
-async function startScanFromUrl(normalizedUrl) {
+async function startScanFromUrl(normalizedUrl, rawSite = urlInput?.value || normalizedUrl) {
+  updateScanUrlInBrowser(rawSite);
   hideScanFailed();
   results.classList.add('hidden');
   submitButton.disabled = true;
@@ -752,6 +753,21 @@ async function startScanFromUrl(normalizedUrl) {
   submitButton.textContent = 'Scanning…';
   await runDemo(normalizedUrl);
   if (demoDataButton) demoDataButton.disabled = false;
+}
+
+function updateScanUrlInBrowser(siteValue) {
+  const trimmed = String(siteValue || '').trim();
+  if (!trimmed) return;
+
+  const params = new URLSearchParams(window.location.search);
+  params.set('url', trimmed);
+  params.delete('scan');
+  params.delete('autostart');
+  params.delete('auto');
+
+  const query = params.toString();
+  const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+  window.history.replaceState({}, '', nextUrl);
 }
 
 function parseScanQueryParams() {
@@ -775,7 +791,7 @@ function applyScanQueryParams() {
 
   urlInput.value = rawSite;
   if (shouldAutostart) {
-    void startScanFromUrl(normalizedUrl);
+    void startScanFromUrl(normalizedUrl, rawSite);
   }
 }
 
