@@ -739,13 +739,15 @@ async function runDataDemo() {
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const normalizedUrl = normalizeUrl(sanitizeSiteInput(urlInput.value));
+  const rawSite = sanitizeSiteInput(urlInput.value);
+  const normalizedUrl = normalizeUrl(rawSite);
   if (!normalizedUrl) return;
-  await startScanFromUrl(normalizedUrl);
+  await startScanFromUrl(normalizedUrl, rawSite);
 });
 
 async function startScanFromUrl(normalizedUrl, rawSite = urlInput?.value || normalizedUrl) {
-  updateScanUrlInBrowser(rawSite);
+  if (urlInput) urlInput.value = rawSite;
+  updateScanUrlInBrowser(normalizedUrl);
   hideScanFailed();
   results.classList.add('hidden');
   submitButton.disabled = true;
@@ -755,18 +757,19 @@ async function startScanFromUrl(normalizedUrl, rawSite = urlInput?.value || norm
   if (demoDataButton) demoDataButton.disabled = false;
 }
 
+function encodeVanityQueryValue(value) {
+  return String(value)
+    .replace(/%/g, '%25')
+    .replace(/&/g, '%26')
+    .replace(/#/g, '%23')
+    .replace(/\+/g, '%2B');
+}
+
 function updateScanUrlInBrowser(siteValue) {
   const trimmed = sanitizeSiteInput(siteValue);
   if (!trimmed) return;
 
-  const params = new URLSearchParams(window.location.search);
-  params.set('url', trimmed);
-  params.delete('scan');
-  params.delete('autostart');
-  params.delete('auto');
-
-  const query = params.toString();
-  const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+  const nextUrl = `${window.location.pathname}?url=${encodeVanityQueryValue(trimmed)}`;
   window.history.replaceState({}, '', nextUrl);
 }
 
@@ -776,9 +779,28 @@ function sanitizeSiteInput(value) {
     .replace(/[,;]+$/, '');
 }
 
+function getScanUrlFromLocation() {
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  let rawSite = sanitizeSiteInput(params.get('url') || params.get('site') || '');
+
+  if (!rawSite && /[?&](?:url|site)=/i.test(search)) {
+    const match = search.match(/[?&](?:url|site)=([^&]*)/i);
+    if (match?.[1]) {
+      try {
+        rawSite = sanitizeSiteInput(decodeURIComponent(match[1]));
+      } catch {
+        rawSite = sanitizeSiteInput(match[1]);
+      }
+    }
+  }
+
+  return rawSite;
+}
+
 function parseScanQueryParams() {
   const params = new URLSearchParams(window.location.search);
-  const rawSite = sanitizeSiteInput(params.get('url') || params.get('site') || '');
+  const rawSite = getScanUrlFromLocation();
   const autostartValue = String(params.get('scan') ?? params.get('autostart') ?? params.get('auto') ?? '')
     .trim()
     .toLowerCase();
