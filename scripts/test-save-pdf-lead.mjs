@@ -1,4 +1,7 @@
+import { loadEnvFile } from '../lib/loadEnvFile.js';
 import { savePdfLead } from '../lib/savePdfLead.js';
+
+loadEnvFile();
 
 try {
   const result = await savePdfLead({
