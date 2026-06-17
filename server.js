@@ -73,33 +73,41 @@ app.use('/runs', (_req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/health', async (_req, res) => {
-  const supabaseConfig = getSupabaseConfigStatus();
-  let supabase = { configured: supabaseConfig.configured };
+  try {
+    const supabaseConfig = getSupabaseConfigStatus();
+    let supabase = { configured: supabaseConfig.configured };
 
-  if (supabaseConfig.configured) {
-    supabase.keyRole = supabaseConfig.keyRole;
-    supabase.keyLooksValid = supabaseConfig.keyLooksValid;
-    if (!supabaseConfig.keyLooksValid) {
-      supabase.ok = false;
-      supabase.error = `Expected service_role key but got "${supabaseConfig.keyRole || 'unknown'}".`;
-    } else {
-      const probe = await probeSupabaseLeadStorage({ writeProbe: false });
-      supabase.ok = probe.ok;
-      if (!probe.ok) {
-        supabase.error = probe.error;
-        supabase.code = probe.code;
-        supabase.hint = probe.hint;
+    if (supabaseConfig.configured) {
+      supabase.keyRole = supabaseConfig.keyRole;
+      supabase.keyLooksValid = supabaseConfig.keyLooksValid;
+      if (!supabaseConfig.keyLooksValid) {
+        supabase.ok = false;
+        supabase.error = `Expected service_role key but got "${supabaseConfig.keyRole || 'unknown'}".`;
+      } else {
+        const probe = await probeSupabaseLeadStorage({ writeProbe: false });
+        supabase.ok = probe.ok;
+        if (!probe.ok) {
+          supabase.error = probe.error;
+          supabase.code = probe.code;
+          supabase.hint = probe.hint;
+        }
       }
+    } else {
+      supabase.ok = false;
+      supabase.error = 'Supabase env vars are not configured.';
     }
-  } else {
-    supabase.ok = false;
-    supabase.error = 'Supabase env vars are not configured.';
-  }
 
-  res.json({
-    ok: true,
-    supabase
-  });
+    res.json({
+      ok: true,
+      supabase
+    });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    res.status(500).json({
+      ok: false,
+      error: error instanceof Error ? error.message : 'Health check failed.'
+    });
+  }
 });
 
 for (const name of ['ex1', 'ex2', 'ex3', 'ex4']) {
