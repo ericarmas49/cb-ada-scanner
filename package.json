@@ -10,7 +10,8 @@
     "dev": "node server.js",
     "build": "node scripts/writeFrontendConfig.js",
     "render-build": "npm install && npx playwright install chromium",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node server.js",
+    "test:supabase": "node scripts/test-pdf-lead-supabase.mjs"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.11.3",

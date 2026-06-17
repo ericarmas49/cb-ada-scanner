@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { runAccessibilityDemo } from './lib/runDemo.js';
 import { runWpThemeScan } from './lib/runWpThemeScan.js';
 import { savePdfLead } from './lib/savePdfLead.js';
+import { getSupabaseConfigStatus, probeSupabaseLeadStorage } from './lib/supabaseDiagnostics.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,8 +72,34 @@ app.use('/runs', (_req, res) => {
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/health', (_req, res) => {
-  res.json({ ok: true });
+app.get('/health', async (_req, res) => {
+  const supabaseConfig = getSupabaseConfigStatus();
+  let supabase = { configured: supabaseConfig.configured };
+
+  if (supabaseConfig.configured) {
+    supabase.keyRole = supabaseConfig.keyRole;
+    supabase.keyLooksValid = supabaseConfig.keyLooksValid;
+    if (!supabaseConfig.keyLooksValid) {
+      supabase.ok = false;
+      supabase.error = `Expected service_role key but got "${supabaseConfig.keyRole || 'unknown'}".`;
+    } else {
+      const probe = await probeSupabaseLeadStorage({ writeProbe: false });
+      supabase.ok = probe.ok;
+      if (!probe.ok) {
+        supabase.error = probe.error;
+        supabase.code = probe.code;
+        supabase.hint = probe.hint;
+      }
+    }
+  } else {
+    supabase.ok = false;
+    supabase.error = 'Supabase env vars are not configured.';
+  }
+
+  res.json({
+    ok: true,
+    supabase
+  });
 });
 
 for (const name of ['ex1', 'ex2', 'ex3', 'ex4']) {
