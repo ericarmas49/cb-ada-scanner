@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { runAccessibilityDemo } from './lib/runDemo.js';
 import { runWpThemeScan } from './lib/runWpThemeScan.js';
 import { savePdfLead } from './lib/savePdfLead.js';
+import { ensureRunPdf, getRunRoot, findRunPdfPath, pdfDownloadName } from './lib/runArtifacts.js';
 import { getSupabaseConfigStatus, probeSupabaseLeadStorage } from './lib/supabaseDiagnostics.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -67,6 +68,30 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '2mb' }));
 app.use('/runs', express.static(runsRoot, { extensions: ['html'] }));
+
+app.get('/api/runs/:runId/pdf', async (req, res) => {
+  try {
+    const runRoot = getRunRoot(dataRoot, req.params.runId);
+    if (!runRoot) {
+      res.status(400).json({ error: 'Invalid run id.' });
+      return;
+    }
+
+    const pdfPath = (await ensureRunPdf(runRoot)) || findRunPdfPath(runRoot);
+    if (!pdfPath || !fs.existsSync(pdfPath)) {
+      res.status(404).json({ error: 'PDF report is not available for this scan.' });
+      return;
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${pdfDownloadName(pdfPath)}"`);
+    res.sendFile(pdfPath);
+  } catch (error) {
+    console.error('Run PDF download failed:', error);
+    res.status(500).json({ error: 'Could not generate the PDF report.' });
+  }
+});
+
 app.use('/runs', (_req, res) => {
   res.status(404).type('text/plain').send('Artifact not found');
 });

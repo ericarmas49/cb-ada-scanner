@@ -353,6 +353,25 @@ async function dataUrlToBlobUrl(dataUrl) {
   return url;
 }
 
+function pdfFileNameFromResult(data) {
+  if (data?.inlineArtifacts?.pdfFileName) return data.inlineArtifacts.pdfFileName;
+  if (data?.reportPdfUrl) {
+    try {
+      const name = decodeURIComponent(new URL(data.reportPdfUrl).pathname.split('/').pop() || '');
+      if (name.endsWith('.pdf')) return name;
+    } catch {
+      /* ignore */
+    }
+  }
+  return 'CircleBlox-ADA-Scan.pdf';
+}
+
+function pdfDownloadHref(data) {
+  if (data?.inlineArtifacts?.reportPdfDataUrl) return null;
+  if (data?.runId) return apiUrl(`/api/runs/${data.runId}/pdf`);
+  return data?.reportPdfUrl || null;
+}
+
 function siteNameFromScan(data) {
   const source = data?.finalUrl || data?.inputUrl || urlInput?.value || '';
   try {
@@ -623,15 +642,17 @@ async function renderResults(data) {
     reportLink.title = isDemoPayload ? 'Demo only — no report file is available.' : '';
   }
   if (reportPdfLink) {
-    const hasPdf = Boolean(data.reportPdfUrl || data.inlineArtifacts?.reportPdfDataUrl);
+    const hasPdf = Boolean(
+      data.reportPdfUrl || data.inlineArtifacts?.reportPdfDataUrl || data.runId
+    );
     const pdfHref = data.inlineArtifacts?.reportPdfDataUrl
       ? await dataUrlToBlobUrl(data.inlineArtifacts.reportPdfDataUrl)
-      : data.reportPdfUrl || '#';
+      : pdfDownloadHref(data) || '#';
     reportPdfLink.href = pdfHref;
     if (hasPdf) {
       pendingPdfDownload = {
         href: pdfHref,
-        fileName: data.inlineArtifacts?.pdfFileName || ''
+        fileName: pdfFileNameFromResult(data)
       };
       reportPdfLink.removeAttribute('download');
     } else {
