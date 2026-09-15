@@ -40,12 +40,8 @@ const aaaIssuesSummary = document.querySelector('#aaa-issues-summary');
 const sortButtons = Array.from(document.querySelectorAll('[data-sort-key]'));
 const filterInputs = Array.from(document.querySelectorAll('[data-filter-group]'));
 const demoStrip = document.querySelector('#demo-strip');
-const servicesMenu = document.querySelector('[data-services-menu]');
-const servicesButton = document.querySelector('[data-services-button]');
-const servicesDropdown = document.querySelector('[data-services-dropdown]');
 const mobileToggle = document.querySelector('[data-mobile-toggle]');
 const mobileMenu = document.querySelector('[data-mobile-menu]');
-const chatButtons = Array.from(document.querySelectorAll('[data-open-chat]'));
 
 const LEVEL_FILTERS = ['A', 'AA', 'AAA'];
 const SEVERITY_FILTERS = ['critical', 'high', 'moderate', 'low'];
@@ -57,7 +53,6 @@ let issueSort = { key: null, direction: 'asc' };
 let activeArtifactUrls = [];
 let currentScanData = null;
 let pendingPdfDownload = null;
-let servicesCloseTimer = null;
 
 const frontendConfig = window.ACCESSIBILITY_DEMO_CONFIG || {};
 const API_BASE_URL = String(frontendConfig.apiBaseUrl || '').replace(/\/+$/, '');
@@ -74,33 +69,11 @@ function normalizeUrl(value) {
   return `https://${trimmed}`;
 }
 
-function setServicesOpen(isOpen, focusFirstItem = false) {
-  if (!servicesButton || !servicesDropdown) return;
-  servicesButton.setAttribute('aria-expanded', String(isOpen));
-  servicesDropdown.hidden = !isOpen;
-  if (isOpen && focusFirstItem) {
-    servicesDropdown.querySelector('a')?.focus();
-  }
-}
-
-function scheduleServicesClose() {
-  window.clearTimeout(servicesCloseTimer);
-  servicesCloseTimer = window.setTimeout(() => setServicesOpen(false), 150);
-}
-
 function setMobileMenuOpen(isOpen) {
   if (!mobileToggle || !mobileMenu) return;
   mobileToggle.setAttribute('aria-expanded', String(isOpen));
   mobileToggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
   mobileMenu.hidden = !isOpen;
-}
-
-function openCircleBloxChat() {
-  if (window.LiveChatWidget?.call) {
-    window.LiveChatWidget.call('maximize');
-    return;
-  }
-  window.location.href = 'https://circleblox.com/';
 }
 
 const SCAN_FAILED_COPY =
@@ -850,54 +823,13 @@ demoDataButton?.addEventListener('click', () => {
   void runDataDemo();
 });
 
-servicesMenu?.addEventListener('mouseenter', () => {
-  window.clearTimeout(servicesCloseTimer);
-  setServicesOpen(true);
-});
-
-servicesMenu?.addEventListener('mouseleave', scheduleServicesClose);
-
-servicesDropdown?.addEventListener('mouseenter', () => {
-  window.clearTimeout(servicesCloseTimer);
-  setServicesOpen(true);
-});
-
-servicesDropdown?.addEventListener('mouseleave', () => setServicesOpen(false));
-
-servicesButton?.addEventListener('click', () => {
-  const isOpen = servicesButton.getAttribute('aria-expanded') === 'true';
-  setServicesOpen(!isOpen, !isOpen);
-});
-
-servicesButton?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    const isOpen = servicesButton.getAttribute('aria-expanded') === 'true';
-    setServicesOpen(!isOpen, !isOpen);
-  } else if (event.key === 'Escape') {
-    setServicesOpen(false);
-    servicesButton.focus();
-  }
-});
-
-servicesDropdown?.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    setServicesOpen(false);
-    servicesButton?.focus();
-  }
-});
-
 mobileToggle?.addEventListener('click', () => {
   const isOpen = mobileToggle.getAttribute('aria-expanded') === 'true';
   setMobileMenuOpen(!isOpen);
 });
 
-mobileMenu?.querySelectorAll('a, button').forEach((item) => {
+mobileMenu?.querySelectorAll('a').forEach((item) => {
   item.addEventListener('click', () => setMobileMenuOpen(false));
-});
-
-chatButtons.forEach((button) => {
-  button.addEventListener('click', openCircleBloxChat);
 });
 
 reportPdfLink?.addEventListener('click', (event) => {
